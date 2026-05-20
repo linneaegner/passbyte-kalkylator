@@ -93,87 +93,207 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
         id="swap-result"
         aria-live="polite"
         aria-atomic="true"
-        className="space-y-3 pb-20 md:pb-0 scroll-mt-4 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-4 lg:items-start lg:space-y-0"
+        className="scroll-mt-4"
       >
-        <div
-          className={cn(
-            "rounded-xl border-2 p-6 sm:p-8 text-center lg:sticky lg:top-6",
-            verdictStyles,
-          )}
-          role="status"
-        >
-          {isGain || isLoss ? (
-            <>
-              <p className="text-base font-medium">
-                {isGain ? t("result.gainLead") : t("result.lossLead")}
-              </p>
-              <p className="text-4xl font-bold tracking-tight mt-1 tabular-nums">
-                {formatSek(absAmount)}
-              </p>
-              {isGain && (
-                <p className="text-base font-medium mt-1">{t("result.gainTrail")}</p>
-              )}
-            </>
-          ) : (
-            <p className="text-2xl font-semibold">{t("result.sameHeadline")}</p>
-          )}
-          <p className="text-sm mt-3 opacity-80">{t("result.compareHint")}</p>
-          {hoursHint && <p className="text-sm mt-1 opacity-70">{hoursHint}</p>}
+        {/* Mobile: stacked verdict + collapsible details */}
+        <div className="space-y-3 pb-20 md:hidden">
+          <VerdictCard
+            isGain={isGain}
+            isLoss={isLoss}
+            absAmount={absAmount}
+            hoursHint={hoursHint}
+            verdictStyles={verdictStyles}
+            layout="stacked"
+          />
+
+          <details className="rounded-lg border bg-card group min-w-0">
+            <summary className="cursor-pointer px-4 py-3 text-sm text-muted-foreground hover:text-foreground list-none flex items-center gap-2">
+              <span
+                className="text-[10px] transition-transform group-open:rotate-90"
+                aria-hidden
+              >
+                ▶
+              </span>
+              {t("result.howCalculated")}
+            </summary>
+            <CalculationBreakdown
+              className="px-4 pb-4 border-t pt-3"
+              taxRate={taxRate}
+              shiftYouGive={shiftYouGive}
+              shiftYouTake={shiftYouTake}
+              netDifference={netDifference}
+              grossDifference={grossDifference}
+            />
+          </details>
         </div>
 
-        <details className="rounded-lg border bg-card group min-w-0">
-          <summary className="cursor-pointer px-4 py-3 text-sm text-muted-foreground hover:text-foreground list-none flex items-center gap-2">
-            <span
-              className="text-[10px] transition-transform group-open:rotate-90"
-              aria-hidden
-            >
-              ▶
-            </span>
-            {t("result.howCalculated")}
-          </summary>
-          <div className="px-4 pb-4 text-sm tabular-nums space-y-4 border-t pt-3">
-            <p className="text-muted-foreground text-xs leading-relaxed">{t("result.formulaExplain")}</p>
-            <p className="text-muted-foreground text-xs leading-relaxed rounded-md bg-muted/50 px-3 py-2">
-              {t("result.nettoExplain", { tax: taxRate })}
-            </p>
+        {/* Desktop: one full-width card — verdict strip + always-visible breakdown */}
+        <article
+          className={cn(
+            "hidden md:block rounded-xl border-2 overflow-hidden shadow-sm",
+            verdictStyles,
+          )}
+        >
+          <header className="px-6 py-5" role="status">
+            <VerdictCard
+              isGain={isGain}
+              isLoss={isLoss}
+              absAmount={absAmount}
+              hoursHint={hoursHint}
+              verdictStyles=""
+              layout="horizontal"
+            />
+          </header>
 
-            <table className="w-full">
-              <thead>
-                <tr className="text-xs text-muted-foreground">
-                  <th className="pb-2 text-left font-normal" scope="col" />
-                  <th className="pb-2 text-right font-normal" scope="col">
-                    {t("result.afterTax")}
-                  </th>
-                  <th className="pb-2 text-right font-normal" scope="col">
-                    {t("result.beforeTax")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <ShiftRow
-                  label={t("result.takeRow")}
-                  net={shiftYouTake.netSalary}
-                  gross={shiftYouTake.grossSalary}
-                />
-                <ShiftRow
-                  label={t("result.giveRow")}
-                  net={shiftYouGive.netSalary}
-                  gross={shiftYouGive.grossSalary}
-                  subtract
-                />
-                <tr className="border-t">
-                  <td className="pt-3 font-semibold">{t("result.diffRow")}</td>
-                  <td className="pt-3 text-right font-semibold">{formatSignedSek(netDifference)}</td>
-                  <td className="pt-3 text-right font-semibold text-muted-foreground">
-                    {formatSignedSek(grossDifference)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="border-t bg-card text-card-foreground px-6 py-5">
+            <h2 className="text-sm font-semibold mb-4">{t("result.howCalculated")}</h2>
+            <CalculationBreakdown
+              taxRate={taxRate}
+              shiftYouGive={shiftYouGive}
+              shiftYouTake={shiftYouTake}
+              netDifference={netDifference}
+              grossDifference={grossDifference}
+            />
           </div>
-        </details>
+        </article>
       </section>
     </>
+  )
+}
+
+function VerdictCard({
+  isGain,
+  isLoss,
+  absAmount,
+  hoursHint,
+  verdictStyles,
+  layout,
+}: {
+  isGain: boolean
+  isLoss: boolean
+  absAmount: number
+  hoursHint: string | null
+  verdictStyles: string
+  layout: "stacked" | "horizontal"
+}) {
+  const { t } = useLanguage()
+  const stacked = layout === "stacked"
+
+  return (
+    <div
+      className={cn(
+        stacked && cn("rounded-xl border-2 p-6 sm:p-8 text-center", verdictStyles),
+        !stacked && "flex flex-wrap items-center justify-between gap-4 gap-y-2",
+      )}
+    >
+      <div className={cn(stacked ? undefined : "min-w-0 flex-1")}>
+        {isGain || isLoss ? (
+          <div
+            className={cn(
+              stacked
+                ? undefined
+                : "flex flex-wrap items-baseline justify-start gap-x-2 gap-y-1",
+            )}
+          >
+            <p className={cn("font-medium", stacked ? "text-base" : "text-lg")}>
+              {isGain ? t("result.gainLead") : t("result.lossLead")}
+            </p>
+            <p
+              className={cn(
+                "font-bold tracking-tight tabular-nums",
+                stacked ? "text-4xl mt-1" : "text-3xl sm:text-4xl",
+              )}
+            >
+              {formatSek(absAmount)}
+            </p>
+            {isGain && (
+              <p className={cn("font-medium", stacked ? "text-base mt-1" : "text-lg")}>
+                {t("result.gainTrail")}
+              </p>
+            )}
+          </div>
+        ) : (
+          <p className={cn("font-semibold", stacked ? "text-2xl" : "text-xl sm:text-2xl")}>
+            {t("result.sameHeadline")}
+          </p>
+        )}
+        <p className={cn("text-sm opacity-80", stacked ? "mt-3" : "mt-1")}>
+          {t("result.compareHint")}
+        </p>
+      </div>
+
+      {hoursHint && (
+        <p
+          className={cn(
+            "text-sm opacity-70 shrink-0",
+            stacked ? "mt-1" : "rounded-md bg-black/5 px-3 py-1.5",
+          )}
+        >
+          {hoursHint}
+        </p>
+      )}
+    </div>
+  )
+}
+
+function CalculationBreakdown({
+  className,
+  taxRate,
+  shiftYouGive,
+  shiftYouTake,
+  netDifference,
+  grossDifference,
+}: {
+  className?: string
+  taxRate: number
+  shiftYouGive: ShiftSwapComparison["shiftYouGive"]
+  shiftYouTake: ShiftSwapComparison["shiftYouTake"]
+  netDifference: number
+  grossDifference: number
+}) {
+  const { t } = useLanguage()
+
+  return (
+    <div className={cn("text-sm tabular-nums space-y-4", className)}>
+      <p className="text-muted-foreground text-xs leading-relaxed">{t("result.formulaExplain")}</p>
+      <p className="text-muted-foreground text-xs leading-relaxed rounded-md bg-muted/50 px-3 py-2">
+        {t("result.nettoExplain", { tax: taxRate })}
+      </p>
+
+      <table className="w-full max-w-xl">
+        <thead>
+          <tr className="text-xs text-muted-foreground">
+            <th className="pb-2 text-left font-normal" scope="col" />
+            <th className="pb-2 text-right font-normal" scope="col">
+              {t("result.afterTax")}
+            </th>
+            <th className="pb-2 text-right font-normal" scope="col">
+              {t("result.beforeTax")}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <ShiftRow
+            label={t("result.takeRow")}
+            net={shiftYouTake.netSalary}
+            gross={shiftYouTake.grossSalary}
+          />
+          <ShiftRow
+            label={t("result.giveRow")}
+            net={shiftYouGive.netSalary}
+            gross={shiftYouGive.grossSalary}
+            subtract
+          />
+          <tr className="border-t">
+            <td className="pt-3 font-semibold">{t("result.diffRow")}</td>
+            <td className="pt-3 text-right font-semibold">{formatSignedSek(netDifference)}</td>
+            <td className="pt-3 text-right font-semibold text-muted-foreground">
+              {formatSignedSek(grossDifference)}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   )
 }
 

@@ -73,8 +73,8 @@ export function ShiftSwapCalculator() {
         setTaxRate={prefs.setTaxRate}
       />
 
-      <div className="flex flex-col gap-3 md:flex-row md:items-stretch md:gap-4">
-        <div className="min-w-0 flex-1">
+      <div className="flex flex-col gap-3 md:grid md:grid-cols-[minmax(0,1fr)_2.5rem_minmax(0,1fr)] md:gap-x-4 md:items-stretch">
+        <div className="min-w-0">
           <ShiftInputCard
             id="shift-give"
             title={t("shift.give")}
@@ -85,7 +85,7 @@ export function ShiftSwapCalculator() {
         </div>
 
         <div
-          className="flex shrink-0 justify-center py-0.5 md:items-center md:py-0 md:px-1"
+          className="flex shrink-0 justify-center py-0.5 md:items-center md:py-0"
           aria-hidden
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary shadow-sm">
@@ -93,7 +93,7 @@ export function ShiftSwapCalculator() {
           </div>
         </div>
 
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0">
           <ShiftInputCard
             id="shift-take"
             title={t("shift.take")}
