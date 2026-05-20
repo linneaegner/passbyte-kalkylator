@@ -9,9 +9,13 @@ interface SwapComparisonResultProps {
   taxRate: number
 }
 
-function formatHours(hours: number, locale: string): string {
-  const rounded = Math.round(Math.abs(hours) * 10) / 10
-  return new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(rounded)
+function formatHoursDuration(hours: number, language: "sv" | "en"): string {
+  const abs = Math.round(Math.abs(hours) * 10) / 10
+  const locale = language === "sv" ? "sv-SE" : "en-US"
+  const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(abs)
+  const unit =
+    language === "sv" ? (abs === 1 ? "timme" : "timmar") : abs === 1 ? "hour" : "hours"
+  return `${number} ${unit}`
 }
 
 export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResultProps) {
@@ -31,8 +35,8 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
   const hoursHint =
     Math.abs(hoursDifference) >= 0.1
       ? hoursDifference > 0
-        ? t("result.hoursMore", { hours: formatHours(hoursDifference, language === "sv" ? "sv-SE" : "en-SE") })
-        : t("result.hoursLess", { hours: formatHours(hoursDifference, language === "sv" ? "sv-SE" : "en-SE") })
+        ? t("result.hoursMore", { hours: formatHoursDuration(hoursDifference, language) })
+        : t("result.hoursLess", { hours: formatHoursDuration(hoursDifference, language) })
       : null
 
   return (
