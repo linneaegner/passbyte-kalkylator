@@ -7,7 +7,7 @@ type Language = "sv" | "en"
 interface LanguageContextType {
   language: Language
   setLanguage: (language: Language) => void
-  t: (key: string) => string
+  t: (key: string, vars?: Record<string, string | number>) => string
 }
 
 const translations = {
@@ -20,6 +20,7 @@ const translations = {
     "calculator.warehouse": "Lager",
     "calculator.ecommerce": "E-handel",
     "calculator.date": "Datum",
+    "calculator.pickDate": "Välj ett datum",
     "calculator.break": "Rast (minuter)",
     "calculator.startTime": "Starttid",
     "calculator.endTime": "Sluttid",
@@ -39,7 +40,8 @@ const translations = {
     "result.workedHours": "Arbetade timmar",
     "result.basePay": "Grundlön",
     "result.obAdditions": "OB-tillägg",
-    "footer.disclaimer": "Informationen baseras på Handels avtal 2025. Kontrollera alltid din lönespecifikation. Vi reserverar oss för eventuella fel.",
+    "footer.disclaimer":
+      "Informationen baseras på Handels avtal butik, lager och e-handel ({year}). Kontrollera alltid din lönespecifikation och lokala avtal. Vi reserverar oss för eventuella fel.",
   },
   en: {
     "page.title": "What will you earn for your shift?",
@@ -51,6 +53,7 @@ const translations = {
     "calculator.warehouse": "Warehouse",
     "calculator.ecommerce": "E-commerce",
     "calculator.date": "Date",
+    "calculator.pickDate": "Pick a date",
     "calculator.break": "Break (minutes)",
     "calculator.startTime": "Start time",
     "calculator.endTime": "End time",
@@ -70,7 +73,8 @@ const translations = {
     "result.workedHours": "Worked Hours",
     "result.basePay": "Base Pay",
     "result.obAdditions": "Inconvenient Hours Supplements",
-    "footer.disclaimer": "Based on the 2025 Handels agreement. Always check your payslip. We disclaim responsibility for any errors.",
+    "footer.disclaimer":
+      "Based on the Handels retail, warehouse and e-commerce agreement ({year}). Always check your payslip and local agreements. We disclaim responsibility for any errors.",
   },
 }
 
@@ -91,8 +95,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("language", newLanguage)
   }
 
-  const t = (key: string): string => {
-    return translations[language][key] || key
+  const t = (key: string, vars?: Record<string, string | number>): string => {
+    let text = translations[language][key as keyof (typeof translations)["sv"]] || key
+    if (vars) {
+      for (const [name, value] of Object.entries(vars)) {
+        text = text.replace(`{${name}}`, String(value))
+      }
+    }
+    return text
   }
 
   return <LanguageContext.Provider value={{ language, setLanguage, t }}>{children}</LanguageContext.Provider>

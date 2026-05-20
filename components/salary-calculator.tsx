@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { format } from "date-fns"
 import { sv, enUS } from "date-fns/locale"
 import { CalendarIcon, HelpCircle, X } from "lucide-react"
@@ -13,50 +13,31 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { calculateSalary } from "@/lib/salary-calculator"
+import { useSalaryPreferences } from "@/hooks/use-salary-preferences"
+import { calculateSalary, type SalaryResult, type WorkArea } from "@/lib/handels"
 import { useLanguage } from "@/lib/language-context"
-import type { WorkArea } from "@/lib/types"
 
 export function SalaryCalculator() {
   const { language, t } = useLanguage()
-  const [workArea, setWorkArea] = useState<WorkArea>("Butik")
+  const { workArea, setWorkArea, baseWage, setBaseWage, taxRate, setTaxRate } = useSalaryPreferences()
   const [date, setDate] = useState<Date>(new Date())
   const [startTime, setStartTime] = useState("08:00")
   const [endTime, setEndTime] = useState("17:00")
   const [breakMinutes, setBreakMinutes] = useState(30)
-  const [baseWage, setBaseWage] = useState(160)
-  const [taxRate, setTaxRate] = useState(30)
-  const [calculationResult, setCalculationResult] = useState<any>(null)
-
-  // Load saved preferences from localStorage
-  useEffect(() => {
-    const savedWorkArea = localStorage.getItem("workArea")
-    const savedBaseWage = localStorage.getItem("baseWage")
-    const savedTaxRate = localStorage.getItem("taxRate")
-
-    if (savedWorkArea) setWorkArea(savedWorkArea as WorkArea)
-    if (savedBaseWage) setBaseWage(Number(savedBaseWage))
-    if (savedTaxRate) setTaxRate(Number(savedTaxRate))
-  }, [])
-
-  // Save preferences to localStorage
-  useEffect(() => {
-    localStorage.setItem("workArea", workArea)
-    localStorage.setItem("baseWage", baseWage.toString())
-    localStorage.setItem("taxRate", taxRate.toString())
-  }, [workArea, baseWage, taxRate])
+  const [calculationResult, setCalculationResult] = useState<SalaryResult | null>(null)
 
   const handleCalculate = () => {
-    const result = calculateSalary({
-      workArea,
-      date,
-      startTime,
-      endTime,
-      breakMinutes,
-      baseWage,
-      taxRate,
-    })
-    setCalculationResult(result)
+    setCalculationResult(
+      calculateSalary({
+        workArea,
+        date,
+        startTime,
+        endTime,
+        breakMinutes,
+        baseWage,
+        taxRate,
+      }),
+    )
   }
 
   const handleClear = () => {
@@ -66,7 +47,6 @@ export function SalaryCalculator() {
     setCalculationResult(null)
   }
 
-  // Translate work area for display
   const translateWorkArea = (area: WorkArea): string => {
     switch (area) {
       case "Butik":
@@ -125,7 +105,7 @@ export function SalaryCalculator() {
                       {date ? (
                         format(date, "PPP", { locale: language === "sv" ? sv : enUS })
                       ) : (
-                        <span>Välj ett datum</span>
+                        <span>{t("calculator.pickDate")}</span>
                       )}
                     </Button>
                   </PopoverTrigger>
@@ -133,7 +113,7 @@ export function SalaryCalculator() {
                     <Calendar
                       mode="single"
                       selected={date}
-                      onSelect={(date) => date && setDate(date)}
+                      onSelect={(selected) => selected && setDate(selected)}
                       initialFocus
                       locale={language === "sv" ? sv : enUS}
                     />
@@ -262,7 +242,7 @@ export function SalaryCalculator() {
                   </div>
 
                   <h4 className="font-medium mt-3">{t("result.obAdditions")}:</h4>
-                  {calculationResult.obBreakdown.map((item: any, index: number) => (
+                  {calculationResult.obBreakdown.map((item, index) => (
                     <div key={index} className="flex justify-between pl-4">
                       <span>{item.type}:</span>
                       <span className="font-medium">
