@@ -24,8 +24,8 @@ export function ShiftInputCard({ title, value, onChange }: ShiftInputCardProps) 
   const update = (patch: Partial<ShiftInput>) => onChange({ ...value, ...patch })
 
   return (
-    <fieldset className="rounded-lg border bg-card p-4 space-y-3">
-      <legend className="text-sm font-semibold text-[#0a3e41] px-1">{title}</legend>
+    <fieldset className="rounded-lg border bg-card p-4 space-y-3 min-w-0">
+      <legend className="text-sm font-semibold text-[#0a3e41] px-1 leading-snug">{title}</legend>
 
       <div className="space-y-1.5">
         <Label htmlFor={`${title}-date`}>{t("shift.date")}</Label>
@@ -52,9 +52,11 @@ export function ShiftInputCard({ title, value, onChange }: ShiftInputCardProps) 
         </Popover>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-1.5">
-          <Label htmlFor={`${title}-start`}>{t("shift.start")}</Label>
+      <div className="grid grid-cols-2 gap-3 min-w-0">
+        <div className="space-y-1.5 min-w-0">
+          <Label htmlFor={`${title}-start`} className="text-xs leading-snug sm:text-sm">
+            {t("shift.start")}
+          </Label>
           <Input
             id={`${title}-start`}
             type="time"
@@ -62,8 +64,10 @@ export function ShiftInputCard({ title, value, onChange }: ShiftInputCardProps) 
             onChange={(e) => update({ startTime: e.target.value })}
           />
         </div>
-        <div className="space-y-1.5">
-          <Label htmlFor={`${title}-end`}>{t("shift.end")}</Label>
+        <div className="space-y-1.5 min-w-0">
+          <Label htmlFor={`${title}-end`} className="text-xs leading-snug sm:text-sm">
+            {t("shift.end")}
+          </Label>
           <Input
             id={`${title}-end`}
             type="time"
@@ -73,9 +77,11 @@ export function ShiftInputCard({ title, value, onChange }: ShiftInputCardProps) 
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-1.5">
-          <Label htmlFor={`${title}-break`}>{t("shift.break")}</Label>
+      <div className="grid grid-cols-2 gap-3 min-w-0">
+        <div className="space-y-1.5 min-w-0">
+          <Label htmlFor={`${title}-break`} className="text-xs leading-snug sm:text-sm">
+            {t("shift.break")}
+          </Label>
           <Input
             id={`${title}-break`}
             type="number"
@@ -85,8 +91,10 @@ export function ShiftInputCard({ title, value, onChange }: ShiftInputCardProps) 
             onChange={(e) => update({ breakMinutes: Number(e.target.value) })}
           />
         </div>
-        <div className="space-y-1.5">
-          <Label htmlFor={`${title}-break-start`}>{t("shift.breakStart")}</Label>
+        <div className="space-y-1.5 min-w-0">
+          <Label htmlFor={`${title}-break-start`} className="text-xs leading-snug sm:text-sm">
+            {t("shift.breakStart")}
+          </Label>
           <Input
             id={`${title}-break-start`}
             type="time"

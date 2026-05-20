@@ -10,7 +10,7 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen py-6 px-4">
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-xl mx-auto">
         <header className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-[#0a3e41]">{t("page.title")}</h1>
           <LanguageSwitcher />

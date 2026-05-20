@@ -5,7 +5,6 @@ import { ShiftInputCard } from "@/components/shift-input-card"
 import { SwapComparisonResult } from "@/components/swap-comparison-result"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Select,
   SelectContent,
@@ -13,11 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useSalaryPreferences } from "@/hooks/use-salary-preferences"
 import { formatSek } from "@/lib/format"
 import {
   compareShiftSwap,
-  WAGE_TIER_LABELS_SV,
   type ShiftInput,
   type WageTier,
   type WorkArea,
@@ -33,6 +32,12 @@ const WAGE_TIERS: Exclude<WageTier, "custom">[] = [
   "exp2",
   "exp3",
 ]
+
+const WORK_AREAS = [
+  ["Butik", "settings.store"],
+  ["Lager", "settings.warehouse"],
+  ["E-handel", "settings.ecommerce"],
+] as const
 
 function startOfToday(): Date {
   const d = new Date()
@@ -62,7 +67,7 @@ function defaultTakeShift(): ShiftInput {
 }
 
 export function ShiftSwapCalculator() {
-  const { language, t } = useLanguage()
+  const { t } = useLanguage()
   const prefs = useSalaryPreferences()
   const [shiftGive, setShiftGive] = useState<ShiftInput>(defaultGiveShift)
   const [shiftTake, setShiftTake] = useState<ShiftInput>(defaultTakeShift)
@@ -81,83 +86,82 @@ export function ShiftSwapCalculator() {
     [shiftGive, shiftTake, settings],
   )
 
-  const wageTierLabel = (tier: Exclude<WageTier, "custom">) => WAGE_TIER_LABELS_SV[tier]
+  const wageTierLabel = (tier: Exclude<WageTier, "custom">) => t(`wageTier.${tier}`)
 
   return (
-    <div className="space-y-5 max-w-lg mx-auto">
-      <fieldset className="rounded-lg border bg-card p-4 space-y-4">
-        <legend className="text-sm font-medium px-1">{t("settings.workArea")}</legend>
-
-        <RadioGroup
+    <div className="space-y-5">
+      <div className="rounded-lg border bg-card p-4 space-y-4">
+        <ToggleGroup
+          type="single"
           value={prefs.workArea}
-          onValueChange={(v) => prefs.setWorkArea(v as WorkArea)}
-          className="flex flex-wrap gap-4"
+          onValueChange={(v) => v && prefs.setWorkArea(v as WorkArea)}
+          className="grid w-full grid-cols-3 gap-1 rounded-lg bg-muted/60 p-1"
+          variant="outline"
+          size="sm"
+          aria-label={t("settings.workArea")}
         >
-          {(
-            [
-              ["Butik", "settings.store"],
-              ["Lager", "settings.warehouse"],
-              ["E-handel", "settings.ecommerce"],
-            ] as const
-          ).map(([value, labelKey]) => (
-            <div key={value} className="flex items-center gap-2">
-              <RadioGroupItem value={value} id={value} />
-              <Label htmlFor={value} className="font-normal cursor-pointer">
-                {t(labelKey)}
-              </Label>
-            </div>
+          {WORK_AREAS.map(([value, labelKey]) => (
+            <ToggleGroupItem
+              key={value}
+              value={value}
+              className="rounded-md border-0 px-2 text-sm data-[state=on]:bg-background data-[state=on]:text-[#0a3e41] data-[state=on]:shadow-sm"
+            >
+              {t(labelKey)}
+            </ToggleGroupItem>
           ))}
-        </RadioGroup>
+        </ToggleGroup>
 
-        <div className="space-y-1.5">
-          <Label>{t("settings.wageTier")}</Label>
-          <Select value={prefs.wageTier} onValueChange={(v) => prefs.setWageTier(v as WageTier)}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {WAGE_TIERS.map((tier) => (
-                <SelectItem key={tier} value={tier}>
-                  {wageTierLabel(tier)}
-                </SelectItem>
-              ))}
-              <SelectItem value="custom">{t("settings.wageCustom")}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {prefs.wageTier === "custom" ? (
+        <div className="grid gap-4 sm:grid-cols-[1fr_5.5rem] sm:items-start">
           <div className="space-y-1.5">
-            <Label htmlFor="wage">{t("settings.wage")}</Label>
+            <Label htmlFor="wage-tier">{t("settings.wageTier")}</Label>
+            <Select value={prefs.wageTier} onValueChange={(v) => prefs.setWageTier(v as WageTier)}>
+              <SelectTrigger id="wage-tier">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {WAGE_TIERS.map((tier) => (
+                  <SelectItem key={tier} value={tier}>
+                    {wageTierLabel(tier)}
+                  </SelectItem>
+                ))}
+                <SelectItem value="custom">{t("settings.wageCustom")}</SelectItem>
+              </SelectContent>
+            </Select>
+            {prefs.wageTier === "custom" ? (
+              <Input
+                id="wage"
+                type="number"
+                min={0}
+                step={0.01}
+                aria-label={t("settings.wage")}
+                placeholder={t("settings.wage")}
+                value={prefs.customWage}
+                onChange={(e) => prefs.setCustomWage(Number(e.target.value))}
+              />
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                {formatSek(prefs.baseWage)}
+                {t("settings.wagePerHour")}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="tax">{t("settings.tax")}</Label>
             <Input
-              id="wage"
+              id="tax"
               type="number"
               min={0}
-              step={0.01}
-              value={prefs.customWage}
-              onChange={(e) => prefs.setCustomWage(Number(e.target.value))}
+              max={100}
+              inputMode="numeric"
+              value={prefs.taxRate}
+              onChange={(e) => prefs.setTaxRate(Number(e.target.value))}
             />
           </div>
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            {t("settings.wageFromAgreement")}: {formatSek(prefs.baseWage)}/tim
-          </p>
-        )}
-
-        <div className="space-y-1.5">
-          <Label htmlFor="tax">{t("settings.tax")}</Label>
-          <Input
-            id="tax"
-            type="number"
-            min={0}
-            max={100}
-            value={prefs.taxRate}
-            onChange={(e) => prefs.setTaxRate(Number(e.target.value))}
-          />
         </div>
-      </fieldset>
+      </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <ShiftInputCard title={t("shift.give")} value={shiftGive} onChange={setShiftGive} />
         <ShiftInputCard title={t("shift.take")} value={shiftTake} onChange={setShiftTake} />
       </div>
