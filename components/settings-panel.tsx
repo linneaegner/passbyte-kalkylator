@@ -88,8 +88,8 @@ export function SettingsPanel({
         />
       </CollapsibleTrigger>
 
-      <CollapsibleContent className="border-t px-4 pb-4 pt-3 space-y-4">
-        <fieldset className="space-y-2">
+      <CollapsibleContent className="border-t px-4 pb-4 pt-3 space-y-4 md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-4 md:space-y-0">
+        <fieldset className="space-y-2 md:col-span-2">
           <legend className="text-sm font-medium">{t("settings.workArea")}</legend>
           <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label={t("settings.workArea")}>
             {WORK_AREAS.map(({ value, labelKey }) => (
@@ -113,7 +113,7 @@ export function SettingsPanel({
           </div>
         </fieldset>
 
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 md:col-span-2">
           <Label htmlFor="wage-tier">{t("settings.wageTier")}</Label>
           <Select value={wageTier} onValueChange={(v) => setWageTier(v as WageTier)}>
             <SelectTrigger id="wage-tier" className="min-h-11">

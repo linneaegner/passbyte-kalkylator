@@ -107,7 +107,12 @@ export function ShiftInputCard({ id, title, variant, value, onChange }: ShiftInp
       : "border-l-4 border-l-emerald-500/80"
 
   return (
-    <fieldset className={cn("rounded-xl border bg-card p-4 space-y-3 shadow-sm", accentClass)}>
+    <fieldset
+      className={cn(
+        "h-full rounded-xl border bg-card p-4 space-y-3 shadow-sm",
+        accentClass,
+      )}
+    >
       <legend className="text-sm font-semibold text-primary px-1">{title}</legend>
 
       <div className="space-y-1.5">

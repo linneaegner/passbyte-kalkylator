@@ -73,28 +73,35 @@ export function ShiftSwapCalculator() {
         setTaxRate={prefs.setTaxRate}
       />
 
-      <div className="space-y-3">
-        <ShiftInputCard
-          id="shift-give"
-          title={t("shift.give")}
-          variant="give"
-          value={shiftGive}
-          onChange={setShiftGive}
-        />
+      <div className="flex flex-col gap-3 md:flex-row md:items-stretch md:gap-4">
+        <div className="min-w-0 flex-1">
+          <ShiftInputCard
+            id="shift-give"
+            title={t("shift.give")}
+            variant="give"
+            value={shiftGive}
+            onChange={setShiftGive}
+          />
+        </div>
 
-        <div className="flex justify-center" aria-hidden>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <ArrowRightLeft className="h-5 w-5 rotate-90 sm:rotate-0" />
+        <div
+          className="flex shrink-0 justify-center py-0.5 md:items-center md:py-0 md:px-1"
+          aria-hidden
+        >
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary shadow-sm">
+            <ArrowRightLeft className="h-5 w-5 rotate-90 md:rotate-0" />
           </div>
         </div>
 
-        <ShiftInputCard
-          id="shift-take"
-          title={t("shift.take")}
-          variant="take"
-          value={shiftTake}
-          onChange={setShiftTake}
-        />
+        <div className="min-w-0 flex-1">
+          <ShiftInputCard
+            id="shift-take"
+            title={t("shift.take")}
+            variant="take"
+            value={shiftTake}
+            onChange={setShiftTake}
+          />
+        </div>
       </div>
 
       <SwapComparisonResult comparison={comparison} taxRate={prefs.taxRate} />

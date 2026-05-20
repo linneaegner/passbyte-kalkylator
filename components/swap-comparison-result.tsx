@@ -93,10 +93,13 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
         id="swap-result"
         aria-live="polite"
         aria-atomic="true"
-        className="space-y-3 pb-20 md:pb-0 scroll-mt-4"
+        className="space-y-3 pb-20 md:pb-0 scroll-mt-4 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-4 lg:items-start lg:space-y-0"
       >
         <div
-          className={cn("rounded-xl border-2 p-8 text-center", verdictStyles)}
+          className={cn(
+            "rounded-xl border-2 p-6 sm:p-8 text-center lg:sticky lg:top-6",
+            verdictStyles,
+          )}
           role="status"
         >
           {isGain || isLoss ? (
@@ -118,7 +121,7 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
           {hoursHint && <p className="text-sm mt-1 opacity-70">{hoursHint}</p>}
         </div>
 
-        <details className="rounded-lg border bg-card group">
+        <details className="rounded-lg border bg-card group min-w-0">
           <summary className="cursor-pointer px-4 py-3 text-sm text-muted-foreground hover:text-foreground list-none flex items-center gap-2">
             <span
               className="text-[10px] transition-transform group-open:rotate-90"
