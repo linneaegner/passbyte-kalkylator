@@ -1,7 +1,7 @@
 "use client"
 
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { SalaryCalculator } from "@/components/salary-calculator"
+import { ShiftSwapCalculator } from "@/components/shift-swap-calculator"
 import { AGREEMENT_YEAR } from "@/lib/handels"
 import { useLanguage } from "@/lib/language-context"
 
@@ -9,18 +9,19 @@ export default function HomePage() {
   const { t } = useLanguage()
 
   return (
-    <main className="min-h-screen bg-white py-8">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-[#0a3e41]">{t("page.title")}</h1>
+    <main className="min-h-screen py-6 px-4">
+      <div className="max-w-lg mx-auto">
+        <header className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-[#0a3e41]">{t("page.title")}</h1>
           <LanguageSwitcher />
-        </div>
-        <SalaryCalculator />
+        </header>
+
+        <ShiftSwapCalculator />
       </div>
 
       <footer className="bg-[#0a3e41] text-white py-6 mt-12">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm">{t("footer.disclaimer", { year: AGREEMENT_YEAR })}</p>
+        <div className="container mx-auto px-4 text-center max-w-2xl">
+          <p className="text-sm">{t("footer", { year: AGREEMENT_YEAR })}</p>
         </div>
       </footer>
     </main>

@@ -1,6 +1,10 @@
 import type React from "react"
+import { Inter } from "next/font/google"
 import { LanguageProvider } from "@/lib/language-context"
+import { cn } from "@/lib/utils"
 import "./globals.css"
+
+const inter = Inter({ subsets: ["latin"] })
 
 export default function RootLayout({
   children,
@@ -8,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="sv">
+      <body className={cn(inter.className, "min-h-screen bg-background text-foreground antialiased")}>
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
@@ -17,7 +21,6 @@ export default function RootLayout({
 }
 
 export const metadata = {
-  title: 'OB Löneberäknare – Räkna ut lön med OB-tillägg',
-  description: 'Beräkna din lön inklusive OB-tillägg enligt Handels kollektivavtal. Välj arbetsområde, ange tid och lön, och få snabb beräkning!',
-  generator: 'v0.dev',
+  title: "Passbyte",
+  description: "Jämför lön vid passbyte enligt Handelsavtal.",
 };

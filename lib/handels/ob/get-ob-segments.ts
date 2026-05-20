@@ -23,9 +23,7 @@ export function getObSegments(workArea: WorkArea, date: Date): TimeSegment[] {
 
   const eveDay = getEveDay(date)
   if (eveDay) {
-    if (workArea === "Butik") {
-      return butikSaturday(date)
-    }
+    if (workArea === "Butik") return butikSaturday(date)
     if (isLagerFullDayEve(eveDay)) {
       return lagerFullDayOb(date, `Storhelgsafton (${eveDay})`)
     }
