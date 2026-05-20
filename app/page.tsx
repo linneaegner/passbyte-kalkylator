@@ -4,26 +4,41 @@ import { LanguageSwitcher } from "@/components/language-switcher"
 import { ShiftSwapCalculator } from "@/components/shift-swap-calculator"
 import { AGREEMENT_YEAR } from "@/lib/handels"
 import { useLanguage } from "@/lib/language-context"
+import { ArrowRightLeft } from "lucide-react"
 
 export default function HomePage() {
   const { t } = useLanguage()
 
   return (
-    <main className="min-h-screen py-6 px-4">
-      <div className="max-w-xl mx-auto">
-        <header className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-[#0a3e41]">{t("page.title")}</h1>
-          <LanguageSwitcher />
-        </header>
+    <div className="min-h-screen flex flex-col">
+      <main className="flex-1 py-5 px-4 pb-8">
+        <div className="max-w-lg mx-auto">
+          <header className="mb-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+                  <ArrowRightLeft className="h-5 w-5" aria-hidden />
+                </div>
+                <div className="min-w-0">
+                  <h1 className="text-xl sm:text-2xl font-bold text-primary truncate">
+                    {t("page.title")}
+                  </h1>
+                  <p className="text-sm text-muted-foreground">{t("page.subtitle")}</p>
+                </div>
+              </div>
+              <LanguageSwitcher />
+            </div>
+          </header>
 
-        <ShiftSwapCalculator />
-      </div>
-
-      <footer className="bg-[#0a3e41] text-white py-6 mt-12">
-        <div className="container mx-auto px-4 text-center max-w-2xl">
-          <p className="text-sm">{t("footer", { year: AGREEMENT_YEAR })}</p>
+          <ShiftSwapCalculator />
         </div>
+      </main>
+
+      <footer className="bg-primary text-primary-foreground py-4 px-4 mt-auto">
+        <p className="text-xs text-center max-w-lg mx-auto opacity-90 leading-relaxed">
+          {t("footer", { year: AGREEMENT_YEAR })}
+        </p>
       </footer>
-    </main>
+    </div>
   )
 }

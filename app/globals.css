@@ -55,5 +55,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, hsl(186 65% 15% / 0.06), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 100%, hsl(186 65% 15% / 0.04), transparent);
+    background-attachment: fixed;
   }
 }

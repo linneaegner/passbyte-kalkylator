@@ -1,5 +1,6 @@
 import type React from "react"
 import { Inter } from "next/font/google"
+import { HtmlLangSync } from "@/components/html-lang-sync"
 import { LanguageProvider } from "@/lib/language-context"
 import { cn } from "@/lib/utils"
 import "./globals.css"
@@ -12,9 +13,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="sv">
+    <html lang="sv" suppressHydrationWarning>
       <body className={cn(inter.className, "min-h-screen bg-background text-foreground antialiased")}>
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider>
+          <HtmlLangSync />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   )
