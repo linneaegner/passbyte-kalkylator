@@ -9,7 +9,7 @@ export interface CalculationSettings {
 }
 
 export interface ShiftInput {
-  date: Date
+  date?: Date
   startTime: string
   endTime: string
   breakMinutes: number

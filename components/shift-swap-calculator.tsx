@@ -10,15 +10,7 @@ import { useSalaryPreferences } from "@/hooks/use-salary-preferences"
 import { compareShiftSwap, type ShiftInput, type WorkArea } from "@/lib/handels"
 import { useLanguage } from "@/lib/language-context"
 
-const defaultGive: ShiftInput = {
-  date: new Date(2026, 11, 25),
-  startTime: "10:00",
-  endTime: "18:00",
-  breakMinutes: 30,
-}
-
-const defaultTake: ShiftInput = {
-  date: new Date(2026, 0, 7),
+const defaultShift: ShiftInput = {
   startTime: "10:00",
   endTime: "18:00",
   breakMinutes: 30,
@@ -27,8 +19,8 @@ const defaultTake: ShiftInput = {
 export function ShiftSwapCalculator() {
   const { t } = useLanguage()
   const prefs = useSalaryPreferences()
-  const [shiftGive, setShiftGive] = useState<ShiftInput>(defaultGive)
-  const [shiftTake, setShiftTake] = useState<ShiftInput>(defaultTake)
+  const [shiftGive, setShiftGive] = useState<ShiftInput>(defaultShift)
+  const [shiftTake, setShiftTake] = useState<ShiftInput>(defaultShift)
 
   const settings = useMemo(
     () => ({
@@ -39,10 +31,10 @@ export function ShiftSwapCalculator() {
     [prefs.workArea, prefs.baseWage, prefs.taxRate],
   )
 
-  const comparison = useMemo(
-    () => compareShiftSwap(shiftGive, shiftTake, settings),
-    [shiftGive, shiftTake, settings],
-  )
+  const comparison = useMemo(() => {
+    if (!shiftGive.date || !shiftTake.date) return null
+    return compareShiftSwap(shiftGive, shiftTake, settings)
+  }, [shiftGive, shiftTake, settings])
 
   return (
     <div className="space-y-5 max-w-lg mx-auto">
@@ -116,7 +108,13 @@ export function ShiftSwapCalculator() {
         <ShiftInputCard title={t("shift.take")} value={shiftTake} onChange={setShiftTake} />
       </div>
 
-      <SwapComparisonResult comparison={comparison} swapsPerMonth={prefs.swapsPerMonth} />
+      {comparison ? (
+        <SwapComparisonResult comparison={comparison} swapsPerMonth={prefs.swapsPerMonth} />
+      ) : (
+        <p className="rounded-lg border bg-muted/30 px-4 py-6 text-center text-sm text-muted-foreground">
+          {t("result.pickDates")}
+        </p>
+      )}
     </div>
   )
 }
