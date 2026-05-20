@@ -39,7 +39,7 @@ const translations = {
     "result.giveRow": "Pass du lämnar",
     "result.diffRow": "Skillnad",
     "footer":
-      "Handelsavtal {year}. Kontrollera lönespec. Uppskattad skatt.",
+      "Baserat på Handels avtal butik, lager och e-handel ({year}). Kontrollera alltid din lönespecifikation och lokala avtal. Verktyget är inte officiellt kopplat till Handels. Vi reserverar oss för eventuella fel.",
   },
   en: {
     "page.title": "Shift swap",
@@ -69,7 +69,7 @@ const translations = {
     "result.giveRow": "Shift you give away",
     "result.diffRow": "Difference",
     "footer":
-      "Handels agreement {year}. Check payslip. Estimated tax.",
+      "Based on the Handels retail, warehouse and e-commerce agreement ({year}). Always check your payslip and local agreements. This tool is not officially affiliated with Handels. We disclaim responsibility for any errors.",
   },
 }
 
