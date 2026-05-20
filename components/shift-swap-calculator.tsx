@@ -34,27 +34,38 @@ const WAGE_TIERS: Exclude<WageTier, "custom">[] = [
   "exp3",
 ]
 
-const defaultGive: ShiftInput = {
-  date: new Date(2026, 11, 25),
-  startTime: "10:00",
-  endTime: "18:00",
-  breakMinutes: 30,
-  breakStartTime: "12:00",
+function startOfToday(): Date {
+  const d = new Date()
+  d.setHours(0, 0, 0, 0)
+  return d
 }
 
-const defaultTake: ShiftInput = {
-  date: new Date(2026, 0, 7),
+function addDays(date: Date, days: number): Date {
+  const d = new Date(date)
+  d.setDate(d.getDate() + days)
+  return d
+}
+
+const defaultShiftTimes = {
   startTime: "10:00",
   endTime: "18:00",
   breakMinutes: 30,
   breakStartTime: "12:00",
+} as const
+
+function defaultGiveShift(): ShiftInput {
+  return { ...defaultShiftTimes, date: startOfToday() }
+}
+
+function defaultTakeShift(): ShiftInput {
+  return { ...defaultShiftTimes, date: addDays(startOfToday(), 1) }
 }
 
 export function ShiftSwapCalculator() {
   const { language, t } = useLanguage()
   const prefs = useSalaryPreferences()
-  const [shiftGive, setShiftGive] = useState<ShiftInput>(defaultGive)
-  const [shiftTake, setShiftTake] = useState<ShiftInput>(defaultTake)
+  const [shiftGive, setShiftGive] = useState<ShiftInput>(defaultGiveShift)
+  const [shiftTake, setShiftTake] = useState<ShiftInput>(defaultTakeShift)
 
   const settings = useMemo(
     () => ({
@@ -151,7 +162,7 @@ export function ShiftSwapCalculator() {
         <ShiftInputCard title={t("shift.take")} value={shiftTake} onChange={setShiftTake} />
       </div>
 
-      <SwapComparisonResult comparison={comparison} />
+      <SwapComparisonResult comparison={comparison} taxRate={prefs.taxRate} />
     </div>
   )
 }
