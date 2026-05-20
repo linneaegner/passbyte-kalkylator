@@ -17,47 +17,54 @@ function collectWarnings(dates: Date[]): string[] {
 }
 
 export function calculateSalary(params: SalaryCalculationParams): SalaryResult {
-  const { workArea, date, startTime, endTime, breakMinutes, baseWage, taxRate } = params
-  const bounds = parseShiftBounds(date, startTime, endTime, breakMinutes)
-  const { start, end, grossHours, paidHours } = bounds
+  const { workArea, date, startTime, endTime, breakMinutes, breakStartTime, baseWage, taxRate } = params
+  const bounds = parseShiftBounds(date, startTime, endTime, breakMinutes, breakStartTime)
+  const { start, end, grossHours, paidHours, workIntervals } = bounds
 
-  const paidRatio = grossHours > 0 ? paidHours / grossHours : 0
   const basePay = paidHours * baseWage
-
   const rawBreakdown: ObBreakdownItem[] = []
-  const days = calendarDaysInShift(start, end)
+  const allDays = calendarDaysInShift(start, end)
 
-  for (const day of days) {
-    const segments = getObSegments(workArea, day)
-    for (const segment of segments) {
-      const overlapHours = calculateOverlapHours(start, end, segment.start, segment.end)
-      if (overlapHours <= 0) continue
+  for (const interval of workIntervals) {
+    const days = calendarDaysInShift(interval.start, interval.end)
+    for (const day of days) {
+      const segments = getObSegments(workArea, day)
+      for (const segment of segments) {
+        const overlapHours = calculateOverlapHours(
+          interval.start,
+          interval.end,
+          segment.start,
+          segment.end,
+        )
+        if (overlapHours <= 0) continue
 
-      const paidOverlapHours = overlapHours * paidRatio
-      const obAmount = paidOverlapHours * baseWage * (segment.obPercentage / 100)
-
-      rawBreakdown.push({
-        type: segment.type,
-        amount: obAmount,
-        percentage: segment.obPercentage,
-        hours: paidOverlapHours,
-      })
+        const obAmount = overlapHours * baseWage * (segment.obPercentage / 100)
+        rawBreakdown.push({
+          type: segment.type,
+          amount: obAmount,
+          percentage: segment.obPercentage,
+          hours: overlapHours,
+        })
+      }
     }
   }
 
   const obBreakdown = mergeObBreakdown(rawBreakdown)
   const obPay = obBreakdown.reduce((sum, item) => sum + item.amount, 0)
   const grossSalary = basePay + obPay
-  const netSalary = grossSalary * (1 - taxRate / 100)
+  const netFactor = 1 - taxRate / 100
+  const netSalary = grossSalary * netFactor
+  const obPayNet = obPay * netFactor
 
   return {
     grossSalary,
     netSalary,
     obPay,
+    obPayNet,
     totalHours: paidHours,
     grossHours,
     basePay,
     obBreakdown,
-    warnings: collectWarnings(days),
+    warnings: collectWarnings(allDays),
   }
 }

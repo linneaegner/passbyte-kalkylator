@@ -1,6 +1,6 @@
 export { AGREEMENT_YEAR, SUPPORTED_HOLIDAY_YEARS, WAGE_INCREASE_APRIL_2026 } from "./config"
 export { calculateSalary } from "./calculate-salary"
-export { compareShiftSwap, monthlyImpact } from "./compare-shifts"
+export { compareShiftSwap } from "./compare-shifts"
 export { getEveDay, isPublicHoliday, isSupportedYear } from "./holidays"
 export {
   getMinimumWage,

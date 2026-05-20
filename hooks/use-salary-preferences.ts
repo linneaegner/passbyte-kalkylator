@@ -1,51 +1,54 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { WorkArea } from "@/lib/handels"
+import { resolveBaseWage, type WageTier, type WorkArea } from "@/lib/handels"
 
 const DEFAULTS = {
   workArea: "Butik" as WorkArea,
-  baseWage: 160.4,
+  wageTier: "age18" as WageTier,
+  customWage: 160.4,
   taxRate: 30,
-  swapsPerMonth: 0,
 }
 
 export function useSalaryPreferences() {
   const [workArea, setWorkArea] = useState<WorkArea>(DEFAULTS.workArea)
-  const [baseWage, setBaseWage] = useState(DEFAULTS.baseWage)
+  const [wageTier, setWageTier] = useState<WageTier>(DEFAULTS.wageTier)
+  const [customWage, setCustomWage] = useState(DEFAULTS.customWage)
   const [taxRate, setTaxRate] = useState(DEFAULTS.taxRate)
-  const [swapsPerMonth, setSwapsPerMonth] = useState(DEFAULTS.swapsPerMonth)
   const [hydrated, setHydrated] = useState(false)
+
+  const baseWage = resolveBaseWage(workArea, wageTier, customWage)
 
   useEffect(() => {
     const savedWorkArea = localStorage.getItem("workArea")
-    const savedBaseWage = localStorage.getItem("baseWage")
+    const savedWageTier = localStorage.getItem("wageTier")
+    const savedCustomWage = localStorage.getItem("customWage")
     const savedTaxRate = localStorage.getItem("taxRate")
-    const savedSwapsPerMonth = localStorage.getItem("swapsPerMonth")
 
     if (savedWorkArea) setWorkArea(savedWorkArea as WorkArea)
-    if (savedBaseWage) setBaseWage(Number(savedBaseWage))
+    if (savedWageTier) setWageTier(savedWageTier as WageTier)
+    if (savedCustomWage) setCustomWage(Number(savedCustomWage))
     if (savedTaxRate) setTaxRate(Number(savedTaxRate))
-    if (savedSwapsPerMonth) setSwapsPerMonth(Number(savedSwapsPerMonth))
     setHydrated(true)
   }, [])
 
   useEffect(() => {
     if (!hydrated) return
     localStorage.setItem("workArea", workArea)
-    localStorage.setItem("baseWage", baseWage.toString())
+    localStorage.setItem("wageTier", wageTier)
+    localStorage.setItem("customWage", customWage.toString())
     localStorage.setItem("taxRate", taxRate.toString())
-    localStorage.setItem("swapsPerMonth", swapsPerMonth.toString())
-  }, [workArea, baseWage, taxRate, swapsPerMonth, hydrated])
+  }, [workArea, wageTier, customWage, taxRate, hydrated])
 
   return {
     workArea,
     setWorkArea,
+    wageTier,
+    setWageTier,
+    customWage,
+    setCustomWage,
     baseWage,
-    setBaseWage,
     taxRate,
     setTaxRate,
-    swapsPerMonth,
-    setSwapsPerMonth,
   }
 }

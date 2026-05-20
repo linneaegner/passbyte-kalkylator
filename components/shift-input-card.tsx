@@ -34,10 +34,10 @@ export function ShiftInputCard({ title, value, onChange }: ShiftInputCardProps) 
             <Button
               id={`${title}-date`}
               variant="outline"
-              className={cn("w-full justify-start font-normal", !value.date && "text-muted-foreground")}
+              className={cn("w-full justify-start font-normal")}
             >
               <CalendarIcon className="mr-2 h-4 w-4" aria-hidden />
-              {value.date ? format(value.date, "d MMM yyyy", { locale }) : t("shift.pickDate")}
+              {format(value.date, "d MMM yyyy", { locale })}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
@@ -73,16 +73,28 @@ export function ShiftInputCard({ title, value, onChange }: ShiftInputCardProps) 
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor={`${title}-break`}>{t("shift.break")}</Label>
-        <Input
-          id={`${title}-break`}
-          type="number"
-          min={0}
-          inputMode="numeric"
-          value={value.breakMinutes}
-          onChange={(e) => update({ breakMinutes: Number(e.target.value) })}
-        />
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label htmlFor={`${title}-break`}>{t("shift.break")}</Label>
+          <Input
+            id={`${title}-break`}
+            type="number"
+            min={0}
+            inputMode="numeric"
+            value={value.breakMinutes}
+            onChange={(e) => update({ breakMinutes: Number(e.target.value) })}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor={`${title}-break-start`}>{t("shift.breakStart")}</Label>
+          <Input
+            id={`${title}-break-start`}
+            type="time"
+            value={value.breakStartTime}
+            disabled={value.breakMinutes <= 0}
+            onChange={(e) => update({ breakStartTime: e.target.value })}
+          />
+        </div>
       </div>
     </fieldset>
   )

@@ -1,6 +1,11 @@
 import { calculateSalary } from "./calculate-salary"
 import type { CalculationSettings, ShiftInput, ShiftSwapComparison } from "./types"
 
+/**
+ * Jämför ett passbyte: vad du tjänar om du jobbar "tar"-passet istället för "lämnar"-passet.
+ * netDifference = netto(tar) − netto(lämnar)
+ * Positivt = du får mer pengar genom bytet.
+ */
 export function compareShiftSwap(
   shiftYouGive: ShiftInput,
   shiftYouTake: ShiftInput,
@@ -17,9 +22,4 @@ export function compareShiftSwap(
     obDifference: shiftTakeResult.obPay - shiftGiveResult.obPay,
     hoursDifference: shiftTakeResult.totalHours - shiftGiveResult.totalHours,
   }
-}
-
-/** Rough monthly impact if similar swaps happen each month. */
-export function monthlyImpact(netDifferencePerSwap: number, swapsPerMonth: number): number {
-  return netDifferencePerSwap * swapsPerMonth
 }

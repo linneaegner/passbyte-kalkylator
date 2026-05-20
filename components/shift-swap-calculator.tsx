@@ -6,21 +6,55 @@ import { SwapComparisonResult } from "@/components/swap-comparison-result"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useSalaryPreferences } from "@/hooks/use-salary-preferences"
-import { compareShiftSwap, type ShiftInput, type WorkArea } from "@/lib/handels"
+import { formatSek } from "@/lib/format"
+import {
+  compareShiftSwap,
+  WAGE_TIER_LABELS_SV,
+  type ShiftInput,
+  type WageTier,
+  type WorkArea,
+} from "@/lib/handels"
 import { useLanguage } from "@/lib/language-context"
 
-const defaultShift: ShiftInput = {
+const WAGE_TIERS: Exclude<WageTier, "custom">[] = [
+  "age16",
+  "age17",
+  "age18",
+  "age19",
+  "exp1",
+  "exp2",
+  "exp3",
+]
+
+const defaultGive: ShiftInput = {
+  date: new Date(2026, 11, 25),
   startTime: "10:00",
   endTime: "18:00",
   breakMinutes: 30,
+  breakStartTime: "12:00",
+}
+
+const defaultTake: ShiftInput = {
+  date: new Date(2026, 0, 7),
+  startTime: "10:00",
+  endTime: "18:00",
+  breakMinutes: 30,
+  breakStartTime: "12:00",
 }
 
 export function ShiftSwapCalculator() {
-  const { t } = useLanguage()
+  const { language, t } = useLanguage()
   const prefs = useSalaryPreferences()
-  const [shiftGive, setShiftGive] = useState<ShiftInput>(defaultShift)
-  const [shiftTake, setShiftTake] = useState<ShiftInput>(defaultShift)
+  const [shiftGive, setShiftGive] = useState<ShiftInput>(defaultGive)
+  const [shiftTake, setShiftTake] = useState<ShiftInput>(defaultTake)
 
   const settings = useMemo(
     () => ({
@@ -31,21 +65,22 @@ export function ShiftSwapCalculator() {
     [prefs.workArea, prefs.baseWage, prefs.taxRate],
   )
 
-  const comparison = useMemo(() => {
-    if (!shiftGive.date || !shiftTake.date) return null
-    return compareShiftSwap(shiftGive, shiftTake, settings)
-  }, [shiftGive, shiftTake, settings])
+  const comparison = useMemo(
+    () => compareShiftSwap(shiftGive, shiftTake, settings),
+    [shiftGive, shiftTake, settings],
+  )
+
+  const wageTierLabel = (tier: Exclude<WageTier, "custom">) => WAGE_TIER_LABELS_SV[tier]
 
   return (
     <div className="space-y-5 max-w-lg mx-auto">
       <fieldset className="rounded-lg border bg-card p-4 space-y-4">
-        <legend className="sr-only">{t("settings.workArea")}</legend>
+        <legend className="text-sm font-medium px-1">{t("settings.workArea")}</legend>
 
         <RadioGroup
           value={prefs.workArea}
           onValueChange={(v) => prefs.setWorkArea(v as WorkArea)}
-          className="flex gap-4"
-          aria-label={t("settings.workArea")}
+          className="flex flex-wrap gap-4"
         >
           {(
             [
@@ -63,7 +98,24 @@ export function ShiftSwapCalculator() {
           ))}
         </RadioGroup>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="space-y-1.5">
+          <Label>{t("settings.wageTier")}</Label>
+          <Select value={prefs.wageTier} onValueChange={(v) => prefs.setWageTier(v as WageTier)}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {WAGE_TIERS.map((tier) => (
+                <SelectItem key={tier} value={tier}>
+                  {wageTierLabel(tier)}
+                </SelectItem>
+              ))}
+              <SelectItem value="custom">{t("settings.wageCustom")}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {prefs.wageTier === "custom" ? (
           <div className="space-y-1.5">
             <Label htmlFor="wage">{t("settings.wage")}</Label>
             <Input
@@ -71,35 +123,26 @@ export function ShiftSwapCalculator() {
               type="number"
               min={0}
               step={0.01}
-              inputMode="decimal"
-              value={prefs.baseWage}
-              onChange={(e) => prefs.setBaseWage(Number(e.target.value))}
+              value={prefs.customWage}
+              onChange={(e) => prefs.setCustomWage(Number(e.target.value))}
             />
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="tax">{t("settings.tax")}</Label>
-            <Input
-              id="tax"
-              type="number"
-              min={0}
-              max={100}
-              inputMode="numeric"
-              value={prefs.taxRate}
-              onChange={(e) => prefs.setTaxRate(Number(e.target.value))}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="swaps">{t("settings.swaps")}</Label>
-            <Input
-              id="swaps"
-              type="number"
-              min={0}
-              max={31}
-              inputMode="numeric"
-              value={prefs.swapsPerMonth}
-              onChange={(e) => prefs.setSwapsPerMonth(Number(e.target.value))}
-            />
-          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            {t("settings.wageFromAgreement")}: {formatSek(prefs.baseWage)}/tim
+          </p>
+        )}
+
+        <div className="space-y-1.5">
+          <Label htmlFor="tax">{t("settings.tax")}</Label>
+          <Input
+            id="tax"
+            type="number"
+            min={0}
+            max={100}
+            value={prefs.taxRate}
+            onChange={(e) => prefs.setTaxRate(Number(e.target.value))}
+          />
         </div>
       </fieldset>
 
@@ -108,13 +151,7 @@ export function ShiftSwapCalculator() {
         <ShiftInputCard title={t("shift.take")} value={shiftTake} onChange={setShiftTake} />
       </div>
 
-      {comparison ? (
-        <SwapComparisonResult comparison={comparison} swapsPerMonth={prefs.swapsPerMonth} />
-      ) : (
-        <p className="rounded-lg border bg-muted/30 px-4 py-6 text-center text-sm text-muted-foreground">
-          {t("result.pickDates")}
-        </p>
-      )}
+      <SwapComparisonResult comparison={comparison} />
     </div>
   )
 }

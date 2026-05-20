@@ -9,10 +9,12 @@ export interface CalculationSettings {
 }
 
 export interface ShiftInput {
-  date?: Date
+  date: Date
   startTime: string
   endTime: string
   breakMinutes: number
+  /** När rasten börjar (HH:mm). */
+  breakStartTime: string
 }
 
 export interface SalaryCalculationParams extends CalculationSettings, ShiftInput {}
@@ -34,7 +36,10 @@ export interface ObBreakdownItem {
 export interface SalaryResult {
   grossSalary: number
   netSalary: number
+  /** OB-tillägg före skatt. */
   obPay: number
+  /** OB-tillägg efter samma skattesats som övrig lön. */
+  obPayNet: number
   totalHours: number
   grossHours: number
   basePay: number

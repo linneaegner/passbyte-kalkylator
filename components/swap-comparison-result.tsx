@@ -2,113 +2,81 @@
 
 import { formatSignedSek, formatSek } from "@/lib/format"
 import type { ShiftSwapComparison } from "@/lib/handels"
-import { monthlyImpact } from "@/lib/handels"
 import { useLanguage } from "@/lib/language-context"
 
 interface SwapComparisonResultProps {
   comparison: ShiftSwapComparison
-  swapsPerMonth: number
 }
 
-export function SwapComparisonResult({ comparison, swapsPerMonth }: SwapComparisonResultProps) {
+export function SwapComparisonResult({ comparison }: SwapComparisonResultProps) {
   const { t } = useLanguage()
-  const { netDifference, grossDifference, obDifference, hoursDifference, shiftYouGive, shiftYouTake } =
-    comparison
+  const { netDifference, shiftYouGive, shiftYouTake } = comparison
 
   const isGain = netDifference > 0.5
   const isLoss = netDifference < -0.5
-  const monthly = monthlyImpact(netDifference, swapsPerMonth)
-  const showHours = Math.abs(hoursDifference) >= 0.1
+  const absAmount = Math.abs(netDifference)
 
-  const verdictText = isGain ? t("result.gain") : isLoss ? t("result.loss") : t("result.same")
   const verdictColor = isGain
     ? "text-emerald-700 bg-emerald-50 border-emerald-200"
     : isLoss
       ? "text-red-700 bg-red-50 border-red-200"
       : "text-slate-700 bg-slate-50 border-slate-200"
 
+  const headline = isGain
+    ? t("result.more", { amount: formatSek(absAmount) })
+    : isLoss
+      ? t("result.less", { amount: formatSek(absAmount) })
+      : t("result.same")
+
   return (
     <section aria-live="polite" aria-atomic="true" className="space-y-3">
       <div
-        className={`rounded-xl border-2 p-6 text-center ${verdictColor}`}
+        className={`rounded-xl border-2 p-8 text-center ${verdictColor}`}
         role="status"
-        aria-label={`${verdictText}: ${formatSignedSek(netDifference)}`}
       >
-        <p className="text-sm font-medium">{verdictText}</p>
-        <p className="text-4xl font-bold tabular-nums mt-1">{formatSignedSek(netDifference)}</p>
-        <p className="text-sm opacity-80 mt-1">{t("result.perSwap")}</p>
-        <p className="text-sm mt-2 tabular-nums opacity-90">
-          {t("result.summary", {
-            gross: formatSignedSek(grossDifference),
-            ob: formatSignedSek(obDifference),
-          })}
-          {showHours && (
-            <span className="block mt-1">
-              {hoursDifference > 0 ? "+" : ""}
-              {hoursDifference.toFixed(1)} h
-            </span>
-          )}
-        </p>
-        {swapsPerMonth > 0 && Math.abs(monthly) >= 1 && (
-          <p className="text-sm mt-3 font-medium tabular-nums">
-            {t("result.monthly", { count: swapsPerMonth, amount: formatSignedSek(monthly) })}
-          </p>
-        )}
+        <p className="text-lg font-medium">{headline}</p>
+        <p className="text-sm mt-2 opacity-80">{t("result.nettoHint")}</p>
       </div>
 
-      <details className="rounded-lg border bg-card group">
-        <summary className="cursor-pointer px-4 py-3 text-sm font-medium list-none flex items-center justify-between">
-          {t("result.details")}
-          <span className="text-muted-foreground text-xs group-open:rotate-180 transition-transform" aria-hidden>
-            ▼
-          </span>
+      <details className="rounded-lg border bg-card">
+        <summary className="cursor-pointer px-4 py-3 text-sm text-muted-foreground hover:text-foreground">
+          {t("result.howCalculated")}
         </summary>
-        <div className="px-4 pb-4 grid gap-3 sm:grid-cols-2 text-sm">
-          <ShiftLine
-            label={t("result.give")}
-            gross={shiftYouGive.grossSalary}
-            net={shiftYouGive.netSalary}
-            ob={shiftYouGive.obPay}
-          />
-          <ShiftLine
-            label={t("result.take")}
-            gross={shiftYouTake.grossSalary}
-            net={shiftYouTake.netSalary}
-            ob={shiftYouTake.obPay}
-          />
+        <div className="px-4 pb-4 text-sm tabular-nums space-y-3">
+          <p className="text-muted-foreground text-xs">{t("result.formulaExplain")}</p>
+
+          <table className="w-full">
+            <tbody className="space-y-2">
+              <MathRow label={t("result.takeRow")} value={shiftYouTake.netSalary} />
+              <MathRow label={t("result.giveRow")} value={shiftYouGive.netSalary} subtract />
+              <tr className="border-t">
+                <td className="pt-3 font-semibold">{t("result.diffRow")}</td>
+                <td className="pt-3 text-right font-semibold">{formatSignedSek(netDifference)}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </details>
     </section>
   )
 }
 
-function ShiftLine({
+function MathRow({
   label,
-  gross,
-  net,
-  ob,
+  value,
+  subtract,
 }: {
   label: string
-  gross: number
-  net: number
-  ob: number
+  value: number
+  subtract?: boolean
 }) {
-  const { t } = useLanguage()
   return (
-    <div className="rounded-md bg-muted/50 p-3 space-y-1 tabular-nums">
-      <p className="font-medium">{label}</p>
-      <p className="flex justify-between gap-2">
-        <span className="text-muted-foreground">{t("result.gross")}</span>
-        <span>{formatSek(gross)}</span>
-      </p>
-      <p className="flex justify-between gap-2">
-        <span className="text-muted-foreground">{t("result.net")}</span>
-        <span>{formatSek(net)}</span>
-      </p>
-      <p className="flex justify-between gap-2">
-        <span className="text-muted-foreground">{t("result.ob")}</span>
-        <span>{formatSek(ob)}</span>
-      </p>
-    </div>
+    <tr>
+      <td className="py-1.5 text-muted-foreground">
+        {subtract ? "− " : ""}
+        {label}
+      </td>
+      <td className="py-1.5 text-right">{formatSek(value)}</td>
+    </tr>
   )
 }
