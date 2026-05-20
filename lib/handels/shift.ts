@@ -41,6 +41,47 @@ export function parseShiftBounds(
   return { start, end, grossHours, paidHours, workIntervals }
 }
 
+function intervalsOverlap(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date): boolean {
+  return aStart < bEnd && aEnd > bStart
+}
+
+function centeredBreakStart(start: Date, end: Date, breakMinutes: number): Date {
+  const midMs = start.getTime() + (end.getTime() - start.getTime()) / 2
+  return new Date(midMs - (breakMinutes * 60 * 1000) / 2)
+}
+
+function resolveBreakWindow(
+  start: Date,
+  end: Date,
+  breakMinutes: number,
+  breakStartTime?: string,
+): { breakStart: Date; breakEnd: Date } {
+  if (!breakStartTime) {
+    const breakStart = centeredBreakStart(start, end, breakMinutes)
+    return { breakStart, breakEnd: new Date(breakStart.getTime() + breakMinutes * 60 * 1000) }
+  }
+
+  let breakStart = parseTimeOnDay(start, breakStartTime)
+  let breakEnd = new Date(breakStart.getTime() + breakMinutes * 60 * 1000)
+
+  if (!intervalsOverlap(breakStart, breakEnd, start, end) && breakStart < start) {
+    const nextDayBreakStart = new Date(breakStart)
+    nextDayBreakStart.setDate(nextDayBreakStart.getDate() + 1)
+    const nextDayBreakEnd = new Date(nextDayBreakStart.getTime() + breakMinutes * 60 * 1000)
+    if (intervalsOverlap(nextDayBreakStart, nextDayBreakEnd, start, end)) {
+      breakStart = nextDayBreakStart
+      breakEnd = nextDayBreakEnd
+    }
+  }
+
+  if (!intervalsOverlap(breakStart, breakEnd, start, end)) {
+    breakStart = centeredBreakStart(start, end, breakMinutes)
+    breakEnd = new Date(breakStart.getTime() + breakMinutes * 60 * 1000)
+  }
+
+  return { breakStart, breakEnd }
+}
+
 function buildWorkIntervals(
   start: Date,
   end: Date,
@@ -51,21 +92,14 @@ function buildWorkIntervals(
     return [{ start, end }]
   }
 
-  let breakStart: Date
-  if (breakStartTime) {
-    breakStart = parseTimeOnDay(start, breakStartTime)
-    if (breakStart < start) {
-      breakStart.setDate(breakStart.getDate() + 1)
-    }
-  } else {
-    const midMs = start.getTime() + (end.getTime() - start.getTime()) / 2
-    breakStart = new Date(midMs - (breakMinutes * 60 * 1000) / 2)
-  }
-
-  const breakEnd = new Date(breakStart.getTime() + breakMinutes * 60 * 1000)
+  const { breakStart, breakEnd } = resolveBreakWindow(start, end, breakMinutes, breakStartTime)
 
   const clampedBreakStart = new Date(Math.max(breakStart.getTime(), start.getTime()))
   const clampedBreakEnd = new Date(Math.min(breakEnd.getTime(), end.getTime()))
+
+  if (clampedBreakEnd <= clampedBreakStart) {
+    return [{ start, end }]
+  }
 
   const intervals: WorkInterval[] = []
   if (clampedBreakStart > start) {
