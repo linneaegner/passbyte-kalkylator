@@ -1,10 +1,11 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { ArrowDown, Clock } from "lucide-react"
+import { AlertTriangle, ArrowDown, Clock } from "lucide-react"
 import { StepHeader } from "@/components/step-header"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { formatHoursDuration, formatSignedSek, formatSek } from "@/lib/format"
-import type { ObBreakdownItem, SalaryResult, ShiftSwapComparison } from "@/lib/handels"
+import { AGREEMENT_YEAR, type ObBreakdownItem, type SalaryResult, type SalaryWarning, type ShiftSwapComparison } from "@/lib/handels"
 import { useLanguage } from "@/lib/language-context"
 import { cn } from "@/lib/utils"
 
@@ -65,6 +66,8 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
           })
       : null
 
+  const warnings = mergeWarnings(shiftYouGive.warnings, shiftYouTake.warnings)
+
   const scrollToResult = () => {
     resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
   }
@@ -104,7 +107,7 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
           </span>
           {(isGain || isLoss) && (
             <span className={cn("text-lg font-bold tabular-nums shrink-0", diffNetColor)}>
-              {formatSignedSek(absAmount)}
+              {formatSignedSek(isGain ? absAmount : -absAmount)}
             </span>
           )}
           <ArrowDown className="h-4 w-4 shrink-0 opacity-60" aria-hidden />
@@ -120,6 +123,14 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
         aria-atomic="true"
       >
         <StepHeader step={3} id="step-result-heading" title={t("step.result.title")} />
+
+        {warnings.length > 0 && (
+          <div className="space-y-2">
+            {warnings.map((warning) => (
+              <WarningAlert key={warningMessageKey(warning)} warning={warning} />
+            ))}
+          </div>
+        )}
 
         <article className="rounded-xl border border-border/80 bg-card shadow-sm overflow-hidden">
           <header className={cn("px-5 py-5 sm:px-6 border-b border-border/60", verdictBg)} role="status">
@@ -197,6 +208,54 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
         </article>
       </section>
     </>
+  )
+}
+
+function mergeWarnings(...groups: SalaryWarning[][]): SalaryWarning[] {
+  const merged = new Map<string, SalaryWarning>()
+
+  for (const group of groups) {
+    for (const warning of group) {
+      if (warning.code === "unsupportedHolidayYears") {
+        const key = warning.code
+        const existing = merged.get(key)
+        if (existing?.code === "unsupportedHolidayYears") {
+          const years = [...new Set([...existing.years, ...warning.years])].sort((a, b) => a - b)
+          merged.set(key, { code: warning.code, years })
+        } else {
+          merged.set(key, { code: warning.code, years: [...warning.years].sort((a, b) => a - b) })
+        }
+      }
+    }
+  }
+
+  return [...merged.values()]
+}
+
+function warningMessageKey(warning: SalaryWarning): string {
+  if (warning.code === "unsupportedHolidayYears") {
+    return `${warning.code}:${warning.years.join(",")}`
+  }
+  return warning.code
+}
+
+function WarningAlert({ warning }: { warning: SalaryWarning }) {
+  const { t } = useLanguage()
+
+  if (warning.code !== "unsupportedHolidayYears") {
+    return null
+  }
+
+  return (
+    <Alert variant="destructive" className="border-amber-500/50 bg-amber-50 text-amber-950 dark:bg-amber-950/30 dark:text-amber-100 [&>svg]:text-amber-600">
+      <AlertTriangle className="h-4 w-4" aria-hidden />
+      <AlertDescription>
+        {t("result.warningUnsupportedYears", {
+          years: warning.years.join(", "),
+          year: AGREEMENT_YEAR,
+        })}
+      </AlertDescription>
+    </Alert>
   )
 }
 

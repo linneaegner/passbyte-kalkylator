@@ -3,6 +3,18 @@
 import { useEffect, useState } from "react"
 import { resolveBaseWage, type WageTier, type WorkArea } from "@/lib/handels"
 
+const WORK_AREAS: WorkArea[] = ["Butik", "Lager", "E-handel"]
+const WAGE_TIERS: WageTier[] = [
+  "age16",
+  "age17",
+  "age18",
+  "age19",
+  "exp1",
+  "exp2",
+  "exp3",
+  "custom",
+]
+
 const DEFAULTS = {
   workArea: "Butik" as WorkArea,
   wageTier: "age18" as WageTier,
@@ -25,10 +37,20 @@ export function useSalaryPreferences() {
     const savedCustomWage = localStorage.getItem("customWage")
     const savedTaxRate = localStorage.getItem("taxRate")
 
-    if (savedWorkArea) setWorkArea(savedWorkArea as WorkArea)
-    if (savedWageTier) setWageTier(savedWageTier as WageTier)
-    if (savedCustomWage) setCustomWage(Number(savedCustomWage))
-    if (savedTaxRate) setTaxRate(Number(savedTaxRate))
+    if (savedWorkArea && WORK_AREAS.includes(savedWorkArea as WorkArea)) {
+      setWorkArea(savedWorkArea as WorkArea)
+    }
+    if (savedWageTier && WAGE_TIERS.includes(savedWageTier as WageTier)) {
+      setWageTier(savedWageTier as WageTier)
+    }
+    if (savedCustomWage) {
+      const wage = Number(savedCustomWage)
+      if (Number.isFinite(wage) && wage >= 0) setCustomWage(wage)
+    }
+    if (savedTaxRate) {
+      const tax = Number(savedTaxRate)
+      if (Number.isFinite(tax) && tax >= 0 && tax <= 100) setTaxRate(tax)
+    }
     setHydrated(true)
   }, [])
 

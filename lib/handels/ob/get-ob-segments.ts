@@ -12,6 +12,21 @@ import {
   lagerWeekday,
 } from "./segments-lager"
 
+function getLagerObSegments(date: Date, eveDay: ReturnType<typeof getEveDay>): TimeSegment[] {
+  const dayOfWeek = date.getDay()
+
+  if (eveDay) {
+    if (isLagerFullDayEve(eveDay)) {
+      return lagerFullDayOb(date, `Storhelgsafton (${eveDay})`)
+    }
+    return lagerSaturday(date)
+  }
+
+  if (dayOfWeek === 0) return lagerSundayOrHoliday(date)
+  if (dayOfWeek === 6) return lagerSaturday(date)
+  return lagerWeekday(date)
+}
+
 export function getObSegments(workArea: WorkArea, date: Date): TimeSegment[] {
   const dayOfWeek = date.getDay()
 
@@ -22,21 +37,13 @@ export function getObSegments(workArea: WorkArea, date: Date): TimeSegment[] {
   }
 
   const eveDay = getEveDay(date)
-  if (eveDay) {
-    if (workArea === "Butik") return butikSaturday(date)
-    if (isLagerFullDayEve(eveDay)) {
-      return lagerFullDayOb(date, `Storhelgsafton (${eveDay})`)
-    }
-    return lagerSaturday(date)
-  }
-
   if (workArea === "Butik") {
+    if (eveDay) return butikSaturday(date)
     if (dayOfWeek === 0) return butikSundayOrHoliday(date)
     if (dayOfWeek === 6) return butikSaturday(date)
     return butikWeekdayEvening(date)
   }
 
-  if (dayOfWeek === 0) return lagerSundayOrHoliday(date)
-  if (dayOfWeek === 6) return lagerSaturday(date)
-  return lagerWeekday(date)
+  // Lager and e-handel share the same OB rules.
+  return getLagerObSegments(date, eveDay)
 }

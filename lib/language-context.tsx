@@ -73,6 +73,8 @@ const translations = {
     "result.obDifferenceHint": "Skillnaden i OB-tillägg: {amount} brutto",
     "result.obDetails": "Visa OB-detaljer",
     "result.obNone": "Inget OB på detta pass",
+    "result.warningUnsupportedYears":
+      "Helgdagar för {years} saknas — OB kan vara felaktigt. Avtalet gäller {year}.",
     "footer":
       "Baserat på Handels avtal butik, lager och e-handel ({year}). Kontrollera alltid din lönespecifikation och lokala avtal. Verktyget är inte officiellt kopplat till Handels. Vi reserverar oss för eventuella fel.",
     "language.label": "Språk",
@@ -139,6 +141,8 @@ const translations = {
     "result.obDifferenceHint": "OB add-ons differ by {amount} gross",
     "result.obDetails": "Show OB details",
     "result.obNone": "No OB on this shift",
+    "result.warningUnsupportedYears":
+      "Holiday data for {years} is missing — OB may be incorrect. The agreement applies to {year}.",
     "footer":
       "Based on the Handels retail, warehouse and e-commerce agreement ({year}). Always check your payslip and local agreements. This tool is not officially affiliated with Handels. We disclaim responsibility for any errors.",
     "language.label": "Language",

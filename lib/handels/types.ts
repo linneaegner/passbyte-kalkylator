@@ -33,6 +33,9 @@ export interface ObBreakdownItem {
   hours: number
 }
 
+export type SalaryWarning =
+  | { code: "unsupportedHolidayYears"; years: number[] }
+
 export interface SalaryResult {
   grossSalary: number
   netSalary: number
@@ -44,7 +47,7 @@ export interface SalaryResult {
   grossHours: number
   basePay: number
   obBreakdown: ObBreakdownItem[]
-  warnings: string[]
+  warnings: SalaryWarning[]
 }
 
 export interface ShiftSwapComparison {

@@ -3,15 +3,13 @@ import { getObSegments } from "./ob/get-ob-segments"
 import { mergeObBreakdown } from "./ob/merge-breakdown"
 import { calculateOverlapHours } from "./ob/utils"
 import { calendarDaysInShift, parseShiftBounds } from "./shift"
-import type { ObBreakdownItem, SalaryCalculationParams, SalaryResult } from "./types"
+import type { ObBreakdownItem, SalaryCalculationParams, SalaryResult, SalaryWarning } from "./types"
 
-function collectWarnings(dates: Date[]): string[] {
-  const warnings: string[] = []
+function collectWarnings(dates: Date[]): SalaryWarning[] {
+  const warnings: SalaryWarning[] = []
   const unsupportedYears = [...new Set(dates.map((d) => d.getFullYear()).filter((y) => !isSupportedYear(y)))]
   if (unsupportedYears.length > 0) {
-    warnings.push(
-      `Helgdagar för ${unsupportedYears.join(", ")} saknas — OB kan vara felaktigt. Avtalet gäller 2026.`,
-    )
+    warnings.push({ code: "unsupportedHolidayYears", years: unsupportedYears })
   }
   return warnings
 }

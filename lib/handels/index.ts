@@ -15,6 +15,7 @@ export type {
   ObBreakdownItem,
   SalaryCalculationParams,
   SalaryResult,
+  SalaryWarning,
   ShiftInput,
   ShiftSwapComparison,
   TimeSegment,
