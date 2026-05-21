@@ -124,4 +124,15 @@
   .card-divider {
     border-color: hsl(var(--card-border) / 0.58);
   }
+
+  /* iOS Safari gives time inputs a large intrinsic min-width */
+  .card-surface input[type="time"] {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .card-surface input[type="time"]::-webkit-date-and-time-value {
+    min-width: 0;
+    text-align: left;
+  }
 }

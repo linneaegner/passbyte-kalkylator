@@ -81,7 +81,7 @@ export function ShiftSwapCalculator() {
 
       <div className="space-y-7">
         <div className="md:grid md:grid-cols-[minmax(0,1fr)_2.5rem_minmax(0,1fr)] md:gap-x-4 md:items-start">
-          <section className="space-y-3" aria-labelledby="step-give-heading">
+          <section className="min-w-0 space-y-3" aria-labelledby="step-give-heading">
             <StepHeader step={1} id="step-give-heading" title={t("shift.give")} />
             <ShiftInputCard
               id="shift-give"
@@ -102,7 +102,7 @@ export function ShiftSwapCalculator() {
             </button>
           </div>
 
-          <section className="space-y-3 md:mt-0 mt-6" aria-labelledby="step-take-heading">
+          <section className="min-w-0 space-y-3 md:mt-0 mt-6" aria-labelledby="step-take-heading">
             <StepHeader step={2} id="step-take-heading" title={t("shift.take")} />
             <ShiftInputCard
               id="shift-take"
