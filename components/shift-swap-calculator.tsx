@@ -3,6 +3,7 @@
 import { ArrowRightLeft } from "lucide-react"
 import { SettingsPanel } from "@/components/settings-panel"
 import { ShiftInputCard } from "@/components/shift-input-card"
+import { StepHeader } from "@/components/step-header"
 import { SwapComparisonResult } from "@/components/swap-comparison-result"
 import { useSalaryPreferences } from "@/hooks/use-salary-preferences"
 import {
@@ -36,7 +37,7 @@ function defaultGiveShift(): ShiftInput {
 }
 
 function defaultTakeShift(): ShiftInput {
-  return { ...defaultShiftTimes, date: addDays(startOfToday(), 1) }
+  return { ...defaultShiftTimes, date: addDays(startOfToday(), 2) }
 }
 
 export function ShiftSwapCalculator() {
@@ -59,8 +60,13 @@ export function ShiftSwapCalculator() {
     [shiftGive, shiftTake, settings],
   )
 
+  const handleSwap = () => {
+    setShiftGive(shiftTake)
+    setShiftTake(shiftGive)
+  }
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <SettingsPanel
         workArea={prefs.workArea}
         setWorkArea={prefs.setWorkArea}
@@ -73,38 +79,65 @@ export function ShiftSwapCalculator() {
         setTaxRate={prefs.setTaxRate}
       />
 
-      <div className="flex flex-col gap-3 md:grid md:grid-cols-[minmax(0,1fr)_2.5rem_minmax(0,1fr)] md:gap-x-4 md:items-stretch">
-        <div className="min-w-0">
-          <ShiftInputCard
-            id="shift-give"
-            title={t("shift.give")}
-            variant="give"
-            value={shiftGive}
-            onChange={setShiftGive}
-          />
-        </div>
+      <div className="space-y-6">
+        <div className="md:grid md:grid-cols-[minmax(0,1fr)_2.5rem_minmax(0,1fr)] md:gap-x-4 md:items-start">
+          <section className="space-y-3" aria-labelledby="step-give-heading">
+            <StepHeader
+              step={1}
+              id="step-give-heading"
+              title={t("shift.give")}
+              subtitle={t("step.give.subtitle")}
+            />
+            <ShiftInputCard
+              id="shift-give"
+              variant="give"
+              value={shiftGive}
+              onChange={setShiftGive}
+              hours={comparison.shiftYouGive.totalHours}
+            />
+          </section>
 
-        <div
-          className="flex shrink-0 justify-center py-0.5 md:items-center md:py-0"
-          aria-hidden
-        >
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary shadow-sm">
-            <ArrowRightLeft className="h-5 w-5 rotate-90 md:rotate-0" />
+          <div className="hidden md:flex flex-col items-center justify-center self-center pt-10">
+            <button
+              type="button"
+              onClick={handleSwap}
+              aria-label={t("step.swap")}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary shadow-sm transition-colors hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <ArrowRightLeft className="h-5 w-5" aria-hidden />
+            </button>
           </div>
+
+          <section className="space-y-3 md:mt-0 mt-6" aria-labelledby="step-take-heading">
+            <StepHeader
+              step={2}
+              id="step-take-heading"
+              title={t("shift.take")}
+              subtitle={t("step.take.subtitle")}
+            />
+            <ShiftInputCard
+              id="shift-take"
+              variant="take"
+              value={shiftTake}
+              onChange={setShiftTake}
+              hours={comparison.shiftYouTake.totalHours}
+            />
+          </section>
         </div>
 
-        <div className="min-w-0">
-          <ShiftInputCard
-            id="shift-take"
-            title={t("shift.take")}
-            variant="take"
-            value={shiftTake}
-            onChange={setShiftTake}
-          />
+        <div className="flex justify-center md:hidden -my-2">
+          <button
+            type="button"
+            onClick={handleSwap}
+            aria-label={t("step.swap")}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary shadow-sm transition-colors hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <ArrowRightLeft className="h-5 w-5 rotate-90" aria-hidden />
+          </button>
         </div>
+
+        <SwapComparisonResult comparison={comparison} taxRate={prefs.taxRate} />
       </div>
-
-      <SwapComparisonResult comparison={comparison} taxRate={prefs.taxRate} />
     </div>
   )
 }

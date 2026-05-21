@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react"
 import { ArrowDown } from "lucide-react"
-import { formatSignedSek, formatSek } from "@/lib/format"
+import { StepHeader } from "@/components/step-header"
+import { formatHoursDuration, formatSignedSek, formatSek } from "@/lib/format"
 import type { ShiftSwapComparison } from "@/lib/handels"
 import { useLanguage } from "@/lib/language-context"
 import { cn } from "@/lib/utils"
@@ -10,15 +11,6 @@ import { cn } from "@/lib/utils"
 interface SwapComparisonResultProps {
   comparison: ShiftSwapComparison
   taxRate: number
-}
-
-function formatHoursDuration(hours: number, language: "sv" | "en"): string {
-  const abs = Math.round(Math.abs(hours) * 10) / 10
-  const locale = language === "sv" ? "sv-SE" : "en-US"
-  const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(abs)
-  const unit =
-    language === "sv" ? (abs === 1 ? "timme" : "timmar") : abs === 1 ? "hour" : "hours"
-  return `${number} ${unit}`
 }
 
 export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResultProps) {
@@ -31,7 +23,25 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
   const isLoss = netDifference < -0.5
   const absAmount = Math.abs(netDifference)
 
-  const verdictStyles = isGain
+  const diffNetColor = isGain
+    ? "text-verdict-gain-foreground"
+    : isLoss
+      ? "text-verdict-loss-foreground"
+      : "text-foreground"
+
+  const diffGrossColor = isGain
+    ? "text-verdict-gain-foreground/70"
+    : isLoss
+      ? "text-verdict-loss-foreground/70"
+      : "text-muted-foreground"
+
+  const verdictBg = isGain
+    ? "bg-verdict-gain/60"
+    : isLoss
+      ? "bg-verdict-loss/60"
+      : "bg-verdict-neutral/60"
+
+  const stickyBarStyles = isGain
     ? "text-verdict-gain-foreground bg-verdict-gain border-verdict-gain-border"
     : isLoss
       ? "text-verdict-loss-foreground bg-verdict-loss border-verdict-loss-border"
@@ -40,8 +50,12 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
   const hoursHint =
     Math.abs(hoursDifference) >= 0.1
       ? hoursDifference > 0
-        ? t("result.hoursMore", { hours: formatHoursDuration(hoursDifference, language) })
-        : t("result.hoursLess", { hours: formatHoursDuration(hoursDifference, language) })
+        ? t("result.hoursMore", {
+            hours: formatHoursDuration(hoursDifference, language),
+          })
+        : t("result.hoursLess", {
+            hours: formatHoursDuration(hoursDifference, language),
+          })
       : null
 
   const scrollToResult = () => {
@@ -74,7 +88,7 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
           onClick={scrollToResult}
           className={cn(
             "w-full px-4 py-3.5 flex items-center justify-between gap-3 border-t-2 shadow-[0_-4px_24px_hsl(186_65%_15%/0.12)] backdrop-blur-md supports-[backdrop-filter]:bg-opacity-95",
-            verdictStyles,
+            stickyBarStyles,
           )}
           aria-label={t("result.scrollToDetails")}
         >
@@ -82,7 +96,9 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
             {isGain ? t("result.gainLead") : isLoss ? t("result.lossLead") : t("result.sameHeadline")}
           </span>
           {(isGain || isLoss) && (
-            <span className="text-lg font-bold tabular-nums shrink-0">{formatSek(absAmount)}</span>
+            <span className={cn("text-lg font-bold tabular-nums shrink-0", diffNetColor)}>
+              {formatSignedSek(absAmount)}
+            </span>
           )}
           <ArrowDown className="h-4 w-4 shrink-0 opacity-60" aria-hidden />
         </button>
@@ -91,69 +107,80 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
       <section
         ref={resultRef}
         id="swap-result"
+        className="space-y-3 scroll-mt-4 pb-20 md:pb-0"
+        aria-labelledby="step-result-heading"
         aria-live="polite"
         aria-atomic="true"
-        className="scroll-mt-4"
       >
-        {/* Mobile: stacked verdict + collapsible details */}
-        <div className="space-y-3 pb-20 md:hidden">
-          <VerdictCard
-            isGain={isGain}
-            isLoss={isLoss}
-            absAmount={absAmount}
-            hoursHint={hoursHint}
-            verdictStyles={verdictStyles}
-            layout="stacked"
-          />
+        <StepHeader
+          step={3}
+          id="step-result-heading"
+          title={t("step.result.title")}
+          subtitle={t("step.result.subtitle")}
+        />
 
-          <details className="rounded-lg border bg-card group min-w-0">
-            <summary className="cursor-pointer px-4 py-3 text-sm text-muted-foreground hover:text-foreground list-none flex items-center gap-2">
-              <span
-                className="text-[10px] transition-transform group-open:rotate-90"
-                aria-hidden
-              >
-                ▶
-              </span>
-              {t("result.howCalculated")}
-            </summary>
-            <CalculationBreakdown
-              className="px-4 pb-4 border-t pt-3"
-              taxRate={taxRate}
-              shiftYouGive={shiftYouGive}
-              shiftYouTake={shiftYouTake}
-              netDifference={netDifference}
-              grossDifference={grossDifference}
-            />
-          </details>
-        </div>
+        <article className="rounded-xl border border-border/80 bg-card shadow-sm overflow-hidden">
+          <header className={cn("px-5 py-5 sm:px-6 border-b border-border/60", verdictBg)} role="status">
+            {isGain || isLoss ? (
+              <div className="text-center sm:text-left">
+                <p className="text-base font-medium text-foreground/80">
+                  {isGain ? t("result.gainLead") : t("result.lossLead")}
+                </p>
+                <p className={cn("text-4xl sm:text-5xl font-bold tracking-tight tabular-nums mt-1", diffNetColor)}>
+                  {formatSignedSek(isGain ? absAmount : -absAmount)}
+                </p>
+                {isGain && (
+                  <p className="text-base font-medium text-foreground/80 mt-1">{t("result.gainTrail")}</p>
+                )}
+                <p className="text-sm text-muted-foreground mt-2">{t("result.compareHint")}</p>
+              </div>
+            ) : (
+              <div className="text-center sm:text-left">
+                <p className="text-2xl font-semibold">{t("result.sameHeadline")}</p>
+                <p className="text-sm text-muted-foreground mt-1">{t("result.compareHint")}</p>
+              </div>
+            )}
 
-        {/* Desktop: one full-width card — verdict strip + always-visible breakdown */}
-        <article
-          className={cn(
-            "hidden md:block rounded-2xl border-2 overflow-hidden shadow-sm",
-            verdictStyles,
-          )}
-        >
-          <header className="px-6 py-5" role="status">
-            <VerdictCard
-              isGain={isGain}
-              isLoss={isLoss}
-              absAmount={absAmount}
-              hoursHint={hoursHint}
-              verdictStyles=""
-              layout="horizontal"
-            />
+            {hoursHint && (
+              <p className="text-sm text-muted-foreground mt-3 text-center sm:text-left">{hoursHint}</p>
+            )}
           </header>
 
-          <div className="border-t bg-card text-card-foreground px-6 py-5">
-            <h2 className="text-sm font-semibold mb-4">{t("result.howCalculated")}</h2>
-            <CalculationBreakdown
-              taxRate={taxRate}
-              shiftYouGive={shiftYouGive}
-              shiftYouTake={shiftYouTake}
-              netDifference={netDifference}
-              grossDifference={grossDifference}
-            />
+          <div className="px-5 py-5 sm:px-6 space-y-4">
+            <details className="group md:hidden">
+              <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground list-none flex items-center gap-2 mb-4">
+                <span className="text-[10px] transition-transform group-open:rotate-90" aria-hidden>
+                  ▶
+                </span>
+                {t("result.howCalculated")}
+              </summary>
+              <CalculationBreakdown
+                taxRate={taxRate}
+                shiftYouGive={shiftYouGive}
+                shiftYouTake={shiftYouTake}
+                netDifference={netDifference}
+                grossDifference={grossDifference}
+                diffNetColor={diffNetColor}
+                diffGrossColor={diffGrossColor}
+                isGain={isGain}
+                isLoss={isLoss}
+              />
+            </details>
+
+            <div className="hidden md:block">
+              <h3 className="text-sm font-semibold mb-4">{t("result.howCalculated")}</h3>
+              <CalculationBreakdown
+                taxRate={taxRate}
+                shiftYouGive={shiftYouGive}
+                shiftYouTake={shiftYouTake}
+                netDifference={netDifference}
+                grossDifference={grossDifference}
+                diffNetColor={diffNetColor}
+                diffGrossColor={diffGrossColor}
+                isGain={isGain}
+                isLoss={isLoss}
+              />
+            </div>
           </div>
         </article>
       </section>
@@ -161,108 +188,38 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
   )
 }
 
-function VerdictCard({
-  isGain,
-  isLoss,
-  absAmount,
-  hoursHint,
-  verdictStyles,
-  layout,
-}: {
-  isGain: boolean
-  isLoss: boolean
-  absAmount: number
-  hoursHint: string | null
-  verdictStyles: string
-  layout: "stacked" | "horizontal"
-}) {
-  const { t } = useLanguage()
-  const stacked = layout === "stacked"
-
-  return (
-    <div
-      className={cn(
-        stacked && cn("rounded-2xl border-2 p-6 sm:p-8 text-center shadow-sm", verdictStyles),
-        !stacked && "flex flex-wrap items-center justify-between gap-4 gap-y-2",
-      )}
-    >
-      <div className={cn(stacked ? undefined : "min-w-0 flex-1")}>
-        {isGain || isLoss ? (
-          <div
-            className={cn(
-              stacked
-                ? undefined
-                : "flex flex-wrap items-baseline justify-start gap-x-2 gap-y-1",
-            )}
-          >
-            <p className={cn("font-medium", stacked ? "text-base" : "text-lg")}>
-              {isGain ? t("result.gainLead") : t("result.lossLead")}
-            </p>
-            <p
-              className={cn(
-                "font-bold tracking-tight tabular-nums",
-                stacked ? "text-4xl mt-1" : "text-3xl sm:text-4xl",
-              )}
-            >
-              {formatSek(absAmount)}
-            </p>
-            {isGain && (
-              <p className={cn("font-medium", stacked ? "text-base mt-1" : "text-lg")}>
-                {t("result.gainTrail")}
-              </p>
-            )}
-          </div>
-        ) : (
-          <p className={cn("font-semibold", stacked ? "text-2xl" : "text-xl sm:text-2xl")}>
-            {t("result.sameHeadline")}
-          </p>
-        )}
-        <p className={cn("text-sm opacity-80", stacked ? "mt-3" : "mt-1")}>
-          {t("result.compareHint")}
-        </p>
-      </div>
-
-      {hoursHint && (
-        <p
-          className={cn(
-            "text-sm opacity-70 shrink-0",
-            stacked
-              ? "mt-1"
-              : "rounded-md bg-verdict-neutral-foreground/10 px-3 py-1.5",
-          )}
-        >
-          {hoursHint}
-        </p>
-      )}
-    </div>
-  )
-}
-
 function CalculationBreakdown({
-  className,
   taxRate,
   shiftYouGive,
   shiftYouTake,
   netDifference,
   grossDifference,
+  diffNetColor,
+  diffGrossColor,
+  isGain,
+  isLoss,
 }: {
-  className?: string
   taxRate: number
   shiftYouGive: ShiftSwapComparison["shiftYouGive"]
   shiftYouTake: ShiftSwapComparison["shiftYouTake"]
   netDifference: number
   grossDifference: number
+  diffNetColor: string
+  diffGrossColor: string
+  isGain: boolean
+  isLoss: boolean
 }) {
   const { t } = useLanguage()
+  const hasDiffColor = isGain || isLoss
 
   return (
-    <div className={cn("text-sm tabular-nums space-y-4", className)}>
+    <div className="text-sm tabular-nums space-y-4">
       <p className="text-muted-foreground text-xs leading-relaxed">{t("result.formulaExplain")}</p>
       <p className="text-muted-foreground text-xs leading-relaxed rounded-md bg-muted/50 px-3 py-2">
         {t("result.nettoExplain", { tax: taxRate })}
       </p>
 
-      <table className="w-full max-w-xl">
+      <table className="w-full">
         <thead>
           <tr className="text-xs text-muted-foreground">
             <th className="pb-2 text-left font-normal" scope="col" />
@@ -286,10 +243,22 @@ function CalculationBreakdown({
             gross={shiftYouGive.grossSalary}
             subtract
           />
-          <tr className="border-t">
+          <tr className="border-t border-border/80">
             <td className="pt-3 font-semibold">{t("result.diffRow")}</td>
-            <td className="pt-3 text-right font-semibold">{formatSignedSek(netDifference)}</td>
-            <td className="pt-3 text-right font-semibold text-muted-foreground">
+            <td
+              className={cn(
+                "pt-3 text-right font-bold text-base",
+                hasDiffColor && diffNetColor,
+              )}
+            >
+              {formatSignedSek(netDifference)}
+            </td>
+            <td
+              className={cn(
+                "pt-3 text-right font-semibold",
+                hasDiffColor ? diffGrossColor : "text-muted-foreground",
+              )}
+            >
               {formatSignedSek(grossDifference)}
             </td>
           </tr>
