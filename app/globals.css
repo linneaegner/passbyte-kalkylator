@@ -24,6 +24,19 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 186 65% 15%;
     --radius: 0.5rem;
+    /* Swap verdict — gain/loss only; tuned for mobile legibility */
+    --verdict-gain: 158 42% 94%;
+    --verdict-gain-foreground: 158 48% 26%;
+    --verdict-gain-border: 158 32% 82%;
+    --verdict-loss: 4 55% 96%;
+    --verdict-loss-foreground: 4 58% 38%;
+    --verdict-loss-border: 4 40% 86%;
+    --verdict-neutral: 186 28% 96%;
+    --verdict-neutral-foreground: 186 35% 28%;
+    --verdict-neutral-border: 186 22% 88%;
+    /* Shift cards — same accent as primary brand */
+    --shift-accent: 186 65% 15%;
+    --shift-accent-muted: 186 40% 96%;
   }
 
   .dark {
@@ -46,6 +59,17 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 186 65% 15%;
+    --verdict-gain: 158 35% 18%;
+    --verdict-gain-foreground: 158 45% 78%;
+    --verdict-gain-border: 158 30% 28%;
+    --verdict-loss: 4 40% 18%;
+    --verdict-loss-foreground: 4 55% 82%;
+    --verdict-loss-border: 4 35% 28%;
+    --verdict-neutral: 186 25% 18%;
+    --verdict-neutral-foreground: 186 20% 75%;
+    --verdict-neutral-border: 186 20% 28%;
+    --shift-accent: 186 55% 55%;
+    --shift-accent-muted: 186 30% 14%;
   }
 }
 

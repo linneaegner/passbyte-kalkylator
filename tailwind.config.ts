@@ -53,6 +53,27 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        verdict: {
+          gain: {
+            DEFAULT: "hsl(var(--verdict-gain))",
+            foreground: "hsl(var(--verdict-gain-foreground))",
+            border: "hsl(var(--verdict-gain-border))",
+          },
+          loss: {
+            DEFAULT: "hsl(var(--verdict-loss))",
+            foreground: "hsl(var(--verdict-loss-foreground))",
+            border: "hsl(var(--verdict-loss-border))",
+          },
+          neutral: {
+            DEFAULT: "hsl(var(--verdict-neutral))",
+            foreground: "hsl(var(--verdict-neutral-foreground))",
+            border: "hsl(var(--verdict-neutral-border))",
+          },
+        },
+        shift: {
+          accent: "hsl(var(--shift-accent))",
+          "accent-muted": "hsl(var(--shift-accent-muted))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

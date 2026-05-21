@@ -32,10 +32,10 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
   const absAmount = Math.abs(netDifference)
 
   const verdictStyles = isGain
-    ? "text-emerald-700 bg-emerald-50 border-emerald-200"
+    ? "text-verdict-gain-foreground bg-verdict-gain border-verdict-gain-border"
     : isLoss
-      ? "text-red-700 bg-red-50 border-red-200"
-      : "text-slate-700 bg-slate-50 border-slate-200"
+      ? "text-verdict-loss-foreground bg-verdict-loss border-verdict-loss-border"
+      : "text-verdict-neutral-foreground bg-verdict-neutral border-verdict-neutral-border"
 
   const hoursHint =
     Math.abs(hoursDifference) >= 0.1
@@ -73,7 +73,7 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
           type="button"
           onClick={scrollToResult}
           className={cn(
-            "w-full px-4 py-3 flex items-center justify-between gap-3 border-t-2 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-sm",
+            "w-full px-4 py-3.5 flex items-center justify-between gap-3 border-t-2 shadow-[0_-4px_24px_hsl(186_65%_15%/0.12)] backdrop-blur-md supports-[backdrop-filter]:bg-opacity-95",
             verdictStyles,
           )}
           aria-label={t("result.scrollToDetails")}
@@ -130,7 +130,7 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
         {/* Desktop: one full-width card — verdict strip + always-visible breakdown */}
         <article
           className={cn(
-            "hidden md:block rounded-xl border-2 overflow-hidden shadow-sm",
+            "hidden md:block rounded-2xl border-2 overflow-hidden shadow-sm",
             verdictStyles,
           )}
         >
@@ -182,7 +182,7 @@ function VerdictCard({
   return (
     <div
       className={cn(
-        stacked && cn("rounded-xl border-2 p-6 sm:p-8 text-center", verdictStyles),
+        stacked && cn("rounded-2xl border-2 p-6 sm:p-8 text-center shadow-sm", verdictStyles),
         !stacked && "flex flex-wrap items-center justify-between gap-4 gap-y-2",
       )}
     >
@@ -226,7 +226,9 @@ function VerdictCard({
         <p
           className={cn(
             "text-sm opacity-70 shrink-0",
-            stacked ? "mt-1" : "rounded-md bg-black/5 px-3 py-1.5",
+            stacked
+              ? "mt-1"
+              : "rounded-md bg-verdict-neutral-foreground/10 px-3 py-1.5",
           )}
         >
           {hoursHint}

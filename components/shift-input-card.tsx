@@ -101,16 +101,11 @@ export function ShiftInputCard({ id, title, variant, value, onChange }: ShiftInp
   const locale = language === "sv" ? sv : enUS
   const update = (patch: Partial<ShiftInput>) => onChange({ ...value, ...patch })
 
-  const accentClass =
-    variant === "give"
-      ? "border-l-4 border-l-orange-400/80"
-      : "border-l-4 border-l-emerald-500/80"
-
   return (
     <fieldset
       className={cn(
-        "h-full rounded-xl border bg-card p-4 space-y-3 shadow-sm",
-        accentClass,
+        "h-full rounded-xl border border-border/80 bg-shift-accent-muted/60 p-4 space-y-3 shadow-sm",
+        "border-l-4 border-l-shift-accent/70",
       )}
     >
       <legend className="text-sm font-semibold text-primary px-1">{title}</legend>
