@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { ArrowDown } from "lucide-react"
+import { ArrowDown, Clock } from "lucide-react"
 import { StepHeader } from "@/components/step-header"
 import { formatHoursDuration, formatSignedSek, formatSek } from "@/lib/format"
 import type { ObBreakdownItem, SalaryResult, ShiftSwapComparison } from "@/lib/handels"
@@ -144,7 +144,15 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
             )}
 
             {hoursHint && (
-              <p className="text-sm text-muted-foreground mt-3 text-center sm:text-left">{hoursHint}</p>
+              <div
+                className={cn(
+                  "mt-4 flex items-center justify-center sm:justify-start gap-2.5",
+                  "rounded-lg border border-primary/25 bg-background/90 px-3.5 py-2.5 shadow-sm",
+                )}
+              >
+                <Clock className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+                <p className="text-sm font-semibold text-foreground">{hoursHint}</p>
+              </div>
             )}
           </header>
 
@@ -223,9 +231,8 @@ function CalculationBreakdown({
 
   return (
     <div className="text-sm tabular-nums space-y-4">
-      <p className="text-muted-foreground text-xs leading-relaxed">{t("result.formulaExplain")}</p>
-      <p className="text-muted-foreground text-xs leading-relaxed rounded-md bg-muted/50 px-3 py-2">
-        {t("result.nettoExplain", { tax: taxRate })}
+      <p className="text-muted-foreground text-xs leading-relaxed">
+        {t("result.formulaExplain")} {t("result.nettoExplain", { tax: taxRate })}
       </p>
 
       <table className="w-full">

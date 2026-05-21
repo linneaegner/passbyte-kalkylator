@@ -52,10 +52,8 @@ const translations = {
     "result.hoursMore": "Passet du tar är {hours} längre",
     "result.hoursLess": "Passet du tar är {hours} kortare",
     "result.howCalculated": "Så räknas det",
-    "result.formulaExplain":
-      "Vi räknar ut lönen för båda passen och tar skillnaden — ungefär som om du byter det ena mot det andra.",
-    "result.nettoExplain":
-      "Netto är lön efter skatt (det som ungefär hamnar på kontot). Brutto är lön före skatt. Här använder vi {tax}% skatt, samma som du angav ovan.",
+    "result.formulaExplain": "Skillnaden mellan passen du tar och lämnar.",
+    "result.nettoExplain": "Beräknat med {tax}% skatt.",
     "result.afterTax": "Efter skatt",
     "result.beforeTax": "Före skatt",
     "result.takeRow": "Pass du tar",
@@ -120,10 +118,8 @@ const translations = {
     "result.hoursMore": "The shift you take is {hours} longer",
     "result.hoursLess": "The shift you take is {hours} shorter",
     "result.howCalculated": "How it's calculated",
-    "result.formulaExplain":
-      "We calculate pay for both shifts and take the difference — as if you swap one for the other.",
-    "result.nettoExplain":
-      "Net is pay after tax (roughly what lands in your account). Gross is pay before tax. We use {tax}% tax here, same as you entered above.",
+    "result.formulaExplain": "The difference between the shift you take and the one you give.",
+    "result.nettoExplain": "Calculated at {tax}% tax.",
     "result.afterTax": "After tax",
     "result.beforeTax": "Before tax",
     "result.takeRow": "Taking",
