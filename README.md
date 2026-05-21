@@ -4,7 +4,7 @@
 
 **Är passbytet värt det?**
 
-*[▶ Live](https://v0-handels-salary-calculator.vercel.app)*
+*[▶ Live](https://passbyte-kalkylator.vercel.app/)*
 
 </div>
 
