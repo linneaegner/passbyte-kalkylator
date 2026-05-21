@@ -71,6 +71,10 @@ const translations = {
     "result.workedHours": "Arbetade timmar",
     "result.basePay": "Grundlön",
     "result.obAdditions": "OB-tillägg",
+    "result.obOfWhich": "varav OB",
+    "result.obDifferenceHint": "Skillnaden i OB-tillägg: {amount} brutto",
+    "result.obDetails": "Visa OB-detaljer",
+    "result.obNone": "Inget OB på detta pass",
     "footer":
       "Baserat på Handels avtal butik, lager och e-handel ({year}). Kontrollera alltid din lönespecifikation och lokala avtal. Verktyget är inte officiellt kopplat till Handels. Vi reserverar oss för eventuella fel.",
     "language.label": "Språk",
@@ -135,6 +139,10 @@ const translations = {
     "result.workedHours": "Worked hours",
     "result.basePay": "Base pay",
     "result.obAdditions": "OB additions",
+    "result.obOfWhich": "of which OB",
+    "result.obDifferenceHint": "OB add-ons differ by {amount} gross",
+    "result.obDetails": "Show OB details",
+    "result.obNone": "No OB on this shift",
     "footer":
       "Based on the Handels retail, warehouse and e-commerce agreement ({year}). Always check your payslip and local agreements. This tool is not officially affiliated with Handels. We disclaim responsibility for any errors.",
     "language.label": "Language",

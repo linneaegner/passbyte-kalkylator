@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { ArrowDown } from "lucide-react"
 import { StepHeader } from "@/components/step-header"
 import { formatHoursDuration, formatSignedSek, formatSek } from "@/lib/format"
-import type { ShiftSwapComparison } from "@/lib/handels"
+import type { ObBreakdownItem, SalaryResult, ShiftSwapComparison } from "@/lib/handels"
 import { useLanguage } from "@/lib/language-context"
 import { cn } from "@/lib/utils"
 
@@ -17,7 +17,14 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
   const { language, t } = useLanguage()
   const resultRef = useRef<HTMLElement>(null)
   const [resultVisible, setResultVisible] = useState(false)
-  const { netDifference, grossDifference, hoursDifference, shiftYouGive, shiftYouTake } = comparison
+  const {
+    netDifference,
+    grossDifference,
+    obDifference,
+    hoursDifference,
+    shiftYouGive,
+    shiftYouTake,
+  } = comparison
 
   const isGain = netDifference > 0.5
   const isLoss = netDifference < -0.5
@@ -155,6 +162,7 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
                 shiftYouTake={shiftYouTake}
                 netDifference={netDifference}
                 grossDifference={grossDifference}
+                obDifference={obDifference}
                 diffNetColor={diffNetColor}
                 diffGrossColor={diffGrossColor}
                 isGain={isGain}
@@ -170,6 +178,7 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
                 shiftYouTake={shiftYouTake}
                 netDifference={netDifference}
                 grossDifference={grossDifference}
+                obDifference={obDifference}
                 diffNetColor={diffNetColor}
                 diffGrossColor={diffGrossColor}
                 isGain={isGain}
@@ -189,6 +198,7 @@ function CalculationBreakdown({
   shiftYouTake,
   netDifference,
   grossDifference,
+  obDifference,
   diffNetColor,
   diffGrossColor,
   isGain,
@@ -199,13 +209,17 @@ function CalculationBreakdown({
   shiftYouTake: ShiftSwapComparison["shiftYouTake"]
   netDifference: number
   grossDifference: number
+  obDifference: number
   diffNetColor: string
   diffGrossColor: string
   isGain: boolean
   isLoss: boolean
 }) {
-  const { t } = useLanguage()
+  const { language, t } = useLanguage()
   const hasDiffColor = isGain || isLoss
+  const showObHint = Math.abs(obDifference) >= 50
+  const hasObDetails =
+    shiftYouTake.obBreakdown.length > 0 || shiftYouGive.obBreakdown.length > 0
 
   return (
     <div className="text-sm tabular-nums space-y-4">
@@ -231,11 +245,17 @@ function CalculationBreakdown({
             label={t("result.takeRow")}
             net={shiftYouTake.netSalary}
             gross={shiftYouTake.grossSalary}
+            obNet={shiftYouTake.obPayNet}
+            obGross={shiftYouTake.obPay}
+            obLabel={t("result.obOfWhich")}
           />
           <ShiftRow
             label={t("result.giveRow")}
             net={shiftYouGive.netSalary}
             gross={shiftYouGive.grossSalary}
+            obNet={shiftYouGive.obPayNet}
+            obGross={shiftYouGive.obPay}
+            obLabel={t("result.obOfWhich")}
             subtract
           />
           <tr className="border-t border-border/80">
@@ -259,6 +279,22 @@ function CalculationBreakdown({
           </tr>
         </tbody>
       </table>
+
+      {showObHint && (
+        <p className="text-xs text-muted-foreground">
+          {t("result.obDifferenceHint", { amount: formatSignedSek(obDifference) })}
+        </p>
+      )}
+
+      {hasObDetails && (
+        <ObDetails
+          shiftYouTake={shiftYouTake}
+          shiftYouTakeLabel={t("result.takeRow")}
+          shiftYouGive={shiftYouGive}
+          shiftYouGiveLabel={t("result.giveRow")}
+          language={language}
+        />
+      )}
     </div>
   )
 }
@@ -267,21 +303,109 @@ function ShiftRow({
   label,
   net,
   gross,
+  obNet,
+  obGross,
+  obLabel,
   subtract,
 }: {
   label: string
   net: number
   gross: number
+  obNet: number
+  obGross: number
+  obLabel: string
   subtract?: boolean
 }) {
+  const showOb = obGross > 0.005
+
   return (
-    <tr>
-      <td className="py-1.5 text-muted-foreground">
-        {subtract ? "− " : ""}
-        {label}
-      </td>
-      <td className="py-1.5 text-right">{formatSek(net)}</td>
-      <td className="py-1.5 text-right text-muted-foreground">{formatSek(gross)}</td>
-    </tr>
+    <>
+      <tr>
+        <td className="py-1.5 text-muted-foreground">
+          {subtract ? "− " : ""}
+          {label}
+        </td>
+        <td className="py-1.5 text-right">{formatSek(net)}</td>
+        <td className="py-1.5 text-right text-muted-foreground">{formatSek(gross)}</td>
+      </tr>
+      {showOb && (
+        <tr className="text-xs text-muted-foreground/80">
+          <td className="pb-1.5 pl-3">
+            {subtract ? "− " : ""}
+            {obLabel}
+          </td>
+          <td className="pb-1.5 text-right">{formatSek(obNet)}</td>
+          <td className="pb-1.5 text-right">{formatSek(obGross)}</td>
+        </tr>
+      )}
+    </>
+  )
+}
+
+function ObDetails({
+  shiftYouTake,
+  shiftYouTakeLabel,
+  shiftYouGive,
+  shiftYouGiveLabel,
+  language,
+}: {
+  shiftYouTake: SalaryResult
+  shiftYouTakeLabel: string
+  shiftYouGive: SalaryResult
+  shiftYouGiveLabel: string
+  language: "sv" | "en"
+}) {
+  const { t } = useLanguage()
+
+  return (
+    <details className="group">
+      <summary className="cursor-pointer text-xs text-muted-foreground hover:text-foreground list-none flex items-center gap-2">
+        <span className="text-[10px] transition-transform group-open:rotate-90" aria-hidden>
+          ▶
+        </span>
+        {t("result.obDetails")}
+      </summary>
+      <div className="mt-3 space-y-3 pl-3 border-l border-border/60">
+        <ObBreakdownList
+          label={shiftYouTakeLabel}
+          items={shiftYouTake.obBreakdown}
+          language={language}
+        />
+        <ObBreakdownList
+          label={shiftYouGiveLabel}
+          items={shiftYouGive.obBreakdown}
+          language={language}
+        />
+      </div>
+    </details>
+  )
+}
+
+function ObBreakdownList({
+  label,
+  items,
+  language,
+}: {
+  label: string
+  items: ObBreakdownItem[]
+  language: "sv" | "en"
+}) {
+  const { t } = useLanguage()
+
+  return (
+    <div>
+      <p className="text-xs font-medium text-foreground/80 mb-1">{label}</p>
+      {items.length === 0 ? (
+        <p className="text-xs text-muted-foreground">{t("result.obNone")}</p>
+      ) : (
+        <ul className="space-y-0.5">
+          {items.map((item) => (
+            <li key={`${label}-${item.type}`} className="text-xs text-muted-foreground">
+              {item.type}: {formatHoursDuration(item.hours, language)} · {formatSek(item.amount)}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   )
 }
