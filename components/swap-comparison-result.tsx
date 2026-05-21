@@ -217,7 +217,7 @@ function CalculationBreakdown({
 }) {
   const { language, t } = useLanguage()
   const hasDiffColor = isGain || isLoss
-  const showObHint = Math.abs(obDifference) >= 50
+  const showObDifference = Math.abs(obDifference) >= 50
   const hasObDetails =
     shiftYouTake.obBreakdown.length > 0 || shiftYouGive.obBreakdown.length > 0
 
@@ -280,18 +280,14 @@ function CalculationBreakdown({
         </tbody>
       </table>
 
-      {showObHint && (
-        <p className="text-xs text-muted-foreground">
-          {t("result.obDifferenceHint", { amount: formatSignedSek(obDifference) })}
-        </p>
-      )}
-
       {hasObDetails && (
         <ObDetails
           shiftYouTake={shiftYouTake}
           shiftYouTakeLabel={t("result.takeRow")}
           shiftYouGive={shiftYouGive}
           shiftYouGiveLabel={t("result.giveRow")}
+          obDifference={obDifference}
+          showObDifference={showObDifference}
           language={language}
         />
       )}
@@ -347,12 +343,16 @@ function ObDetails({
   shiftYouTakeLabel,
   shiftYouGive,
   shiftYouGiveLabel,
+  obDifference,
+  showObDifference,
   language,
 }: {
   shiftYouTake: SalaryResult
   shiftYouTakeLabel: string
   shiftYouGive: SalaryResult
   shiftYouGiveLabel: string
+  obDifference: number
+  showObDifference: boolean
   language: "sv" | "en"
 }) {
   const { t } = useLanguage()
@@ -376,6 +376,11 @@ function ObDetails({
           items={shiftYouGive.obBreakdown}
           language={language}
         />
+        {showObDifference && (
+          <p className="text-xs font-medium text-foreground/80 pt-1 border-t border-border/60">
+            {t("result.obDifferenceHint", { amount: formatSignedSek(obDifference) })}
+          </p>
+        )}
       </div>
     </details>
   )
