@@ -10,7 +10,7 @@ export default function HomePage() {
   const { t } = useLanguage()
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-x-hidden">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:z-50 focus:top-4 focus:left-4 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -18,7 +18,7 @@ export default function HomePage() {
         {t("a11y.skipToContent")}
       </a>
       <main id="main-content" className="flex-1 py-5 px-4 sm:px-6 pb-8 md:py-8">
-        <div className="max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto w-full">
+        <div className="max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto w-full min-w-0">
           <header className="mb-5 md:mb-6">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">

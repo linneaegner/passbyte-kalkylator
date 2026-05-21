@@ -124,13 +124,13 @@ export function ShiftInputCard({ id, value, onChange, hours }: ShiftInputCardPro
         />
       </div>
 
-      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-2 sm:gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div className="min-w-0 space-y-1.5">
           <Label htmlFor={`${id}-start`}>{t("shift.start")}</Label>
           <Input
             id={`${id}-start`}
             type="time"
-            className="min-h-11 min-w-0 bg-background"
+            className="shift-time-input min-h-11 min-w-0 bg-background"
             value={value.startTime}
             onChange={(e) => update({ startTime: e.target.value })}
           />
@@ -140,14 +140,14 @@ export function ShiftInputCard({ id, value, onChange, hours }: ShiftInputCardPro
           <Input
             id={`${id}-end`}
             type="time"
-            className="min-h-11 min-w-0 bg-background"
+            className="shift-time-input min-h-11 min-w-0 bg-background"
             value={value.endTime}
             onChange={(e) => update({ endTime: e.target.value })}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-2 sm:gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div className="min-w-0 space-y-1.5">
           <Label htmlFor={`${id}-break`}>{t("shift.break")}</Label>
           <Input
@@ -165,7 +165,7 @@ export function ShiftInputCard({ id, value, onChange, hours }: ShiftInputCardPro
           <Input
             id={`${id}-break-start`}
             type="time"
-            className="min-h-11 min-w-0 bg-background"
+            className="shift-time-input min-h-11 min-w-0 bg-background"
             value={value.breakStartTime}
             disabled={value.breakMinutes <= 0}
             onChange={(e) => update({ breakStartTime: e.target.value })}

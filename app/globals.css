@@ -79,6 +79,11 @@
   * {
     @apply border-border;
   }
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground;
     background-color: hsl(210 30% 98%);
@@ -125,13 +130,23 @@
     border-color: hsl(var(--card-border) / 0.58);
   }
 
-  /* iOS Safari gives time inputs a large intrinsic min-width */
-  .card-surface input[type="time"] {
+  /* iOS Safari: time inputs ignore min-width in narrow grid columns */
+  .shift-time-input {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
     min-width: 0;
     max-width: 100%;
   }
 
-  .card-surface input[type="time"]::-webkit-date-and-time-value {
+  @media (min-width: 640px) {
+    .shift-time-input {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+  }
+
+  .shift-time-input::-webkit-date-and-time-value {
     min-width: 0;
     text-align: left;
   }
