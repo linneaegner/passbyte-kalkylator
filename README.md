@@ -8,9 +8,9 @@
 
 </div>
 
-När någon frågar *"kan du ta mitt söndagspass mot mitt torsdagspass?"* är svaret sällan uppenbart. Ett pass kan vara kortare men sakna OB, ett annat längre men ge mer i kvälls- och helgtillägg. Passbyte räknar ut skillnaden i brutto och netto så att du kan säga ja eller nej med öppna ögon.
+Vid passbyte jämför man ofta bara timmar. Lönen beror också på dag, tid och OB, så två pass kan betala olika trots samma längd. Passbyte räknar ut skillnaden i brutto och netto enligt Handels avtal.
 
-Välj butik, lager eller e-handel, fyll i passet du lämnar och det du tar — med datum, tider, rast och timlön. Du ser direkt nettoskillnaden och en uppdelning av grundlön och OB enligt Handels avtal. Svenska och engelska, mobilanpassat.
+Fyll i passet du lämnar och det du tar — datum, tider, rast och timlön — för butik, lager eller e-handel.
 
 > Verktyget är **inte** officiellt kopplat till Handels. Kontrollera alltid din lönespecifikation och lokala avtal. Vi reserverar oss för eventuella fel.
 
