@@ -11,7 +11,6 @@ export function formatHoursDuration(hours: number, language: "sv" | "en"): strin
   const abs = Math.round(Math.abs(hours) * 10) / 10
   const locale = language === "sv" ? "sv-SE" : "en-US"
   const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(abs)
-  const unit =
-    language === "sv" ? (abs === 1 ? "timme" : "timmar") : abs === 1 ? "hour" : "hours"
+  const unit = "h"
   return `${number} ${unit}`
 }

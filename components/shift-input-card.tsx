@@ -3,7 +3,6 @@
 import { format } from "date-fns"
 import { sv, enUS } from "date-fns/locale"
 import { CalendarIcon, Clock } from "lucide-react"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -24,7 +23,6 @@ import type { ShiftInput } from "@/lib/handels"
 
 interface ShiftInputCardProps {
   id: string
-  variant: "give" | "take"
   value: ShiftInput
   onChange: (value: ShiftInput) => void
   hours?: number
@@ -97,26 +95,19 @@ function DatePickerButton({
   )
 }
 
-function HoursBadge({ hours, variant }: { hours: number; variant: "give" | "take" }) {
+function HoursBadge({ hours }: { hours: number }) {
   const { language } = useLanguage()
   const label = formatHoursDuration(hours, language)
 
   return (
-    <div
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium",
-        variant === "give"
-          ? "bg-orange-50 text-orange-600"
-          : "bg-primary/10 text-primary",
-      )}
-    >
+    <div className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
       <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
       {label}
     </div>
   )
 }
 
-export function ShiftInputCard({ id, variant, value, onChange, hours }: ShiftInputCardProps) {
+export function ShiftInputCard({ id, value, onChange, hours }: ShiftInputCardProps) {
   const { language, t } = useLanguage()
   const locale = language === "sv" ? sv : enUS
   const update = (patch: Partial<ShiftInput>) => onChange({ ...value, ...patch })
@@ -182,7 +173,7 @@ export function ShiftInputCard({ id, variant, value, onChange, hours }: ShiftInp
         </div>
       </div>
 
-      {hours !== undefined && hours > 0 && <HoursBadge hours={hours} variant={variant} />}
+      {hours !== undefined && hours > 0 && <HoursBadge hours={hours} />}
     </div>
   )
 }

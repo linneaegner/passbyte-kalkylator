@@ -112,12 +112,7 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
         aria-live="polite"
         aria-atomic="true"
       >
-        <StepHeader
-          step={3}
-          id="step-result-heading"
-          title={t("step.result.title")}
-          subtitle={t("step.result.subtitle")}
-        />
+        <StepHeader step={3} id="step-result-heading" title={t("step.result.title")} />
 
         <article className="rounded-xl border border-border/80 bg-card shadow-sm overflow-hidden">
           <header className={cn("px-5 py-5 sm:px-6 border-b border-border/60", verdictBg)} role="status">

@@ -82,15 +82,9 @@ export function ShiftSwapCalculator() {
       <div className="space-y-6">
         <div className="md:grid md:grid-cols-[minmax(0,1fr)_2.5rem_minmax(0,1fr)] md:gap-x-4 md:items-start">
           <section className="space-y-3" aria-labelledby="step-give-heading">
-            <StepHeader
-              step={1}
-              id="step-give-heading"
-              title={t("shift.give")}
-              subtitle={t("step.give.subtitle")}
-            />
+            <StepHeader step={1} id="step-give-heading" title={t("shift.give")} />
             <ShiftInputCard
               id="shift-give"
-              variant="give"
               value={shiftGive}
               onChange={setShiftGive}
               hours={comparison.shiftYouGive.totalHours}
@@ -109,15 +103,9 @@ export function ShiftSwapCalculator() {
           </div>
 
           <section className="space-y-3 md:mt-0 mt-6" aria-labelledby="step-take-heading">
-            <StepHeader
-              step={2}
-              id="step-take-heading"
-              title={t("shift.take")}
-              subtitle={t("step.take.subtitle")}
-            />
+            <StepHeader step={2} id="step-take-heading" title={t("shift.take")} />
             <ShiftInputCard
               id="shift-take"
-              variant="take"
               value={shiftTake}
               onChange={setShiftTake}
               hours={comparison.shiftYouTake.totalHours}
