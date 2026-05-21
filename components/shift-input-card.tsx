@@ -243,9 +243,12 @@ function HoursBadge({ hours }: { hours: number }) {
   )
 }
 
-/** Side-by-side fields only on large screens; iPhone landscape stays single column. */
 function FieldPair({ children }: { children: ReactNode }) {
-  return <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:gap-3">{children}</div>
+  return (
+    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-2 sm:gap-3">
+      {children}
+    </div>
+  )
 }
 
 export function ShiftInputCard({ id, value, onChange, hours }: ShiftInputCardProps) {
