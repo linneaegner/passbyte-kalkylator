@@ -78,6 +78,7 @@ const translations = {
     "footer":
       "Baserat på Handels avtal butik, lager och e-handel ({year}). Kontrollera alltid din lönespecifikation och lokala avtal. Verktyget är inte officiellt kopplat till Handels. Vi reserverar oss för eventuella fel.",
     "language.label": "Språk",
+    "a11y.skipToContent": "Hoppa till innehåll",
   },
   en: {
     "page.title": "Shift swap",
@@ -146,6 +147,7 @@ const translations = {
     "footer":
       "Based on the Handels retail, warehouse and e-commerce agreement ({year}). Always check your payslip and local agreements. This tool is not officially affiliated with Handels. We disclaim responsibility for any errors.",
     "language.label": "Language",
+    "a11y.skipToContent": "Skip to content",
   },
 }
 

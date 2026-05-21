@@ -113,7 +113,7 @@ export function ShiftInputCard({ id, value, onChange, hours }: ShiftInputCardPro
   const update = (patch: Partial<ShiftInput>) => onChange({ ...value, ...patch })
 
   return (
-    <div className="rounded-xl border border-border/80 bg-card p-4 space-y-3 shadow-sm">
+    <div className="card-surface p-4 space-y-3">
       <div className="space-y-1.5">
         <Label htmlFor={`${id}-date`}>{t("shift.date")}</Label>
         <DatePickerButton

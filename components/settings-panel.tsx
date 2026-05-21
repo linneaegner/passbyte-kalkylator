@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/collapsible"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Select,
   SelectContent,
@@ -73,7 +74,7 @@ export function SettingsPanel({
   })
 
   return (
-    <Collapsible defaultOpen={false} className="group rounded-xl border bg-card shadow-sm">
+    <Collapsible defaultOpen={false} className="group card-surface">
       <CollapsibleTrigger className="flex w-full items-center gap-3 px-4 py-3.5 text-left min-h-[52px] group">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <Settings2 className="h-4 w-4" aria-hidden />
@@ -88,29 +89,37 @@ export function SettingsPanel({
         />
       </CollapsibleTrigger>
 
-      <CollapsibleContent className="border-t px-4 pb-4 pt-3 space-y-4 md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-4 md:space-y-0">
+      <CollapsibleContent className="card-divider border-t px-4 pb-4 pt-3 space-y-4 md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-4 md:space-y-0">
         <fieldset className="space-y-2 md:col-span-2">
-          <legend className="text-sm font-medium">{t("settings.workArea")}</legend>
-          <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label={t("settings.workArea")}>
-            {WORK_AREAS.map(({ value, labelKey }) => (
-              <button
-                key={value}
-                type="button"
-                role="radio"
-                aria-checked={workArea === value}
-                onClick={() => setWorkArea(value)}
-                className={cn(
-                  "min-h-11 rounded-lg border px-2 py-2 text-sm font-medium transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                  workArea === value
-                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                    : "border-input bg-background text-foreground hover:bg-accent",
-                )}
-              >
-                {t(labelKey)}
-              </button>
-            ))}
-          </div>
+          <legend id="work-area-legend" className="text-sm font-medium">
+            {t("settings.workArea")}
+          </legend>
+          <RadioGroup
+            value={workArea}
+            onValueChange={(value) => setWorkArea(value as WorkArea)}
+            className="grid grid-cols-3 gap-2"
+            aria-labelledby="work-area-legend"
+          >
+            {WORK_AREAS.map(({ value, labelKey }) => {
+              const optionId = `work-area-${value}`
+              return (
+                <div key={value}>
+                  <RadioGroupItem value={value} id={optionId} className="peer sr-only" />
+                  <Label
+                    htmlFor={optionId}
+                    className={cn(
+                      "flex min-h-11 cursor-pointer items-center justify-center rounded-lg border px-2 py-2 text-center text-sm font-medium transition-colors",
+                      "border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
+                      "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2",
+                      "peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground peer-data-[state=checked]:shadow-sm",
+                    )}
+                  >
+                    {t(labelKey)}
+                  </Label>
+                </div>
+              )
+            })}
+          </RadioGroup>
         </fieldset>
 
         <div className="space-y-1.5 md:col-span-2">

@@ -66,7 +66,7 @@ export function ShiftSwapCalculator() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       <SettingsPanel
         workArea={prefs.workArea}
         setWorkArea={prefs.setWorkArea}
@@ -79,7 +79,7 @@ export function ShiftSwapCalculator() {
         setTaxRate={prefs.setTaxRate}
       />
 
-      <div className="space-y-6">
+      <div className="space-y-7">
         <div className="md:grid md:grid-cols-[minmax(0,1fr)_2.5rem_minmax(0,1fr)] md:gap-x-4 md:items-start">
           <section className="space-y-3" aria-labelledby="step-give-heading">
             <StepHeader step={1} id="step-give-heading" title={t("shift.give")} />

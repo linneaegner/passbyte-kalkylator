@@ -38,9 +38,9 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
       : "text-foreground"
 
   const diffGrossColor = isGain
-    ? "text-verdict-gain-foreground/70"
+    ? "text-verdict-gain-foreground"
     : isLoss
-      ? "text-verdict-loss-foreground/70"
+      ? "text-verdict-loss-foreground"
       : "text-muted-foreground"
 
   const verdictBg = isGain
@@ -69,7 +69,11 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
   const warnings = mergeWarnings(shiftYouGive.warnings, shiftYouTake.warnings)
 
   const scrollToResult = () => {
-    resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    resultRef.current?.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "center",
+    })
   }
 
   useEffect(() => {
@@ -132,18 +136,18 @@ export function SwapComparisonResult({ comparison, taxRate }: SwapComparisonResu
           </div>
         )}
 
-        <article className="rounded-xl border border-border/80 bg-card shadow-sm overflow-hidden">
-          <header className={cn("px-5 py-5 sm:px-6 border-b border-border/60", verdictBg)} role="status">
+        <article className="card-surface overflow-hidden">
+          <header className={cn("px-5 py-5 sm:px-6 border-b card-divider", verdictBg)} role="status">
             {isGain || isLoss ? (
               <div className="text-center sm:text-left">
-                <p className="text-base font-medium text-foreground/80">
+                <p className="text-base font-medium text-foreground">
                   {isGain ? t("result.gainLead") : t("result.lossLead")}
                 </p>
                 <p className={cn("text-4xl sm:text-5xl font-bold tracking-tight tabular-nums mt-1", diffNetColor)}>
                   {formatSignedSek(isGain ? absAmount : -absAmount)}
                 </p>
                 {isGain && (
-                  <p className="text-base font-medium text-foreground/80 mt-1">{t("result.gainTrail")}</p>
+                  <p className="text-base font-medium text-foreground mt-1">{t("result.gainTrail")}</p>
                 )}
                 <p className="text-sm text-muted-foreground mt-2">{t("result.compareHint")}</p>
               </div>
@@ -295,6 +299,7 @@ function CalculationBreakdown({
       </p>
 
       <table className="w-full">
+        <caption className="sr-only">{t("result.howCalculated")}</caption>
         <thead>
           <tr className="text-xs text-muted-foreground">
             <th className="pb-2 text-left font-normal" scope="col" />
@@ -324,7 +329,7 @@ function CalculationBreakdown({
             obLabel={t("result.obOfWhich")}
             subtract
           />
-          <tr className="border-t border-border/80">
+          <tr className="border-t card-divider">
             <td className="pt-3 font-semibold">{t("result.diffRow")}</td>
             <td
               className={cn(
@@ -391,7 +396,7 @@ function ShiftRow({
         <td className="py-1.5 text-right text-muted-foreground">{formatSek(gross)}</td>
       </tr>
       {showOb && (
-        <tr className="text-xs text-muted-foreground/80">
+        <tr className="text-xs text-muted-foreground">
           <td className="pb-1.5 pl-3">
             {subtract ? "− " : ""}
             {obLabel}
@@ -431,7 +436,7 @@ function ObDetails({
         </span>
         {t("result.obDetails")}
       </summary>
-      <div className="mt-3 space-y-3 pl-3 border-l border-border/60">
+      <div className="mt-3 space-y-3 pl-3 border-l card-divider">
         <ObBreakdownList
           label={shiftYouTakeLabel}
           items={shiftYouTake.obBreakdown}
@@ -443,7 +448,7 @@ function ObDetails({
           language={language}
         />
         {showObDifference && (
-          <p className="text-xs font-medium text-foreground/80 pt-1 border-t border-border/60">
+          <p className="text-xs font-medium text-foreground pt-1 border-t card-divider">
             {t("result.obDifferenceHint", { amount: formatSignedSek(obDifference) })}
           </p>
         )}
@@ -465,7 +470,7 @@ function ObBreakdownList({
 
   return (
     <div>
-      <p className="text-xs font-medium text-foreground/80 mb-1">{label}</p>
+      <p className="text-xs font-medium text-foreground mb-1">{label}</p>
       {items.length === 0 ? (
         <p className="text-xs text-muted-foreground">{t("result.obNone")}</p>
       ) : (
