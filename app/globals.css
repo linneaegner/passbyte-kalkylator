@@ -130,24 +130,4 @@
     border-color: hsl(var(--card-border) / 0.58);
   }
 
-  /* iOS Safari: time inputs ignore min-width in narrow grid columns */
-  .shift-time-input {
-    box-sizing: border-box;
-    display: block;
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-  }
-
-  @media (min-width: 640px) {
-    .shift-time-input {
-      padding-left: 0.5rem;
-      padding-right: 0.5rem;
-    }
-  }
-
-  .shift-time-input::-webkit-date-and-time-value {
-    min-width: 0;
-    text-align: left;
-  }
 }

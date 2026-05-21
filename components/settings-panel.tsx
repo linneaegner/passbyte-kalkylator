@@ -97,7 +97,7 @@ export function SettingsPanel({
           <RadioGroup
             value={workArea}
             onValueChange={(value) => setWorkArea(value as WorkArea)}
-            className="grid grid-cols-3 gap-2"
+            className="grid grid-cols-1 gap-2 sm:grid-cols-3"
             aria-labelledby="work-area-legend"
           >
             {WORK_AREAS.map(({ value, labelKey }) => {
