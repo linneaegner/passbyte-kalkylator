@@ -89,7 +89,8 @@ export function SettingsPanel({
         />
       </CollapsibleTrigger>
 
-      <CollapsibleContent className="card-divider border-t px-4 pb-4 pt-3 space-y-4 md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-4 md:space-y-0">
+      <CollapsibleContent className="overflow-hidden data-[state=closed]:hidden">
+        <div className="card-divider border-t px-4 pb-4 pt-3 space-y-4 md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-4 md:space-y-0">
         <fieldset className="space-y-2 md:col-span-2">
           <legend id="work-area-legend" className="text-sm font-medium">
             {t("settings.workArea")}
@@ -171,6 +172,7 @@ export function SettingsPanel({
             value={taxRate}
             onChange={(e) => setTaxRate(Number(e.target.value))}
           />
+        </div>
         </div>
       </CollapsibleContent>
     </Collapsible>

@@ -27,6 +27,7 @@ export default function RootLayout({
 export const metadata = {
   title: "Passbyte",
   description: "Jämför lön vid passbyte enligt Handelsavtal.",
+  applicationName: "Passbyte",
 }
 
 export const viewport = {

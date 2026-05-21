@@ -1,7 +1,8 @@
 {
-  "name": "my-v0-project",
+  "name": "passbyte-kalkylator",
   "version": "0.1.0",
   "private": true,
+  "description": "Jämför lön vid passbyte enligt Handelsavtal.",
   "scripts": {
     "dev": "next dev -H 127.0.0.1",
     "build": "next build",
