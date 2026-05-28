@@ -81,6 +81,8 @@ const translations = {
       "Helgdagar för {years} saknas — OB kan vara felaktigt. Avtalet gäller {year}.",
     "footer":
       "Baserat på Handels avtal butik, lager och e-handel ({year}). Kontrollera alltid din lönespecifikation och lokala avtal. Verktyget är inte officiellt kopplat till Handels. Vi reserverar oss för eventuella fel.",
+    "footer.privacy":
+      "Vi samlar inte in personuppgifter. Dina inställningar sparas bara lokalt i webbläsaren.",
     "language.label": "Språk",
     "a11y.skipToContent": "Hoppa till innehåll",
   },
@@ -154,6 +156,8 @@ const translations = {
       "Holiday data for {years} is missing — OB may be incorrect. The agreement applies to {year}.",
     "footer":
       "Based on the Handels retail, warehouse and e-commerce agreement ({year}). Always check your payslip and local agreements. This tool is not officially affiliated with Handels. We disclaim responsibility for any errors.",
+    "footer.privacy":
+      "We do not collect personal data. Your settings are stored locally in your browser only.",
     "language.label": "Language",
     "a11y.skipToContent": "Skip to content",
   },
