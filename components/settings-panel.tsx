@@ -17,19 +17,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { formatSek } from "@/lib/format"
-import { type WageTier, type WorkArea } from "@/lib/handels"
+import { getWageTiersForWorkArea, type WageTier, type WorkArea } from "@/lib/handels"
 import { useLanguage } from "@/lib/language-context"
 import { cn } from "@/lib/utils"
-
-const WAGE_TIERS: Exclude<WageTier, "custom">[] = [
-  "age16",
-  "age17",
-  "age18",
-  "age19",
-  "exp1",
-  "exp2",
-  "exp3",
-]
 
 const WORK_AREAS: { value: WorkArea; labelKey: string }[] = [
   { value: "Butik", labelKey: "settings.store" },
@@ -63,6 +53,7 @@ export function SettingsPanel({
   const { t } = useLanguage()
 
   const workAreaLabel = WORK_AREAS.find((a) => a.value === workArea)
+  const wageTiers = getWageTiersForWorkArea(workArea)
   const wageLabel =
     wageTier === "custom"
       ? formatSek(customWage)
@@ -130,7 +121,7 @@ export function SettingsPanel({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {WAGE_TIERS.map((tier) => (
+              {wageTiers.map((tier) => (
                 <SelectItem key={tier} value={tier}>
                   {t(`wageTier.${tier}`)}
                 </SelectItem>

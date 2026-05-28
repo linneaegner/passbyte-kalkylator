@@ -4,6 +4,8 @@ export { compareShiftSwap } from "./compare-shifts"
 export { getEveDay, isPublicHoliday, isSupportedYear } from "./holidays"
 export {
   getMinimumWage,
+  getWageTiersForWorkArea,
+  isWageTierValidForWorkArea,
   resolveBaseWage,
   WAGE_TIER_LABELS_SV,
   type WageTier,

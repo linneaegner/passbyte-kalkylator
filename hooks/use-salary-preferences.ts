@@ -1,17 +1,24 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { resolveBaseWage, type WageTier, type WorkArea } from "@/lib/handels"
+import { useCallback, useEffect, useState } from "react"
+import {
+  isWageTierValidForWorkArea,
+  resolveBaseWage,
+  type WageTier,
+  type WorkArea,
+} from "@/lib/handels"
 
 const WORK_AREAS: WorkArea[] = ["Butik", "Lager", "E-handel"]
-const WAGE_TIERS: WageTier[] = [
+const ALL_WAGE_TIERS: WageTier[] = [
   "age16",
   "age17",
   "age18",
   "age19",
+  "age20",
   "exp1",
   "exp2",
   "exp3",
+  "exp6m",
   "custom",
 ]
 
@@ -23,7 +30,7 @@ const DEFAULTS = {
 }
 
 export function useSalaryPreferences() {
-  const [workArea, setWorkArea] = useState<WorkArea>(DEFAULTS.workArea)
+  const [workArea, setWorkAreaState] = useState<WorkArea>(DEFAULTS.workArea)
   const [wageTier, setWageTier] = useState<WageTier>(DEFAULTS.wageTier)
   const [customWage, setCustomWage] = useState(DEFAULTS.customWage)
   const [taxRate, setTaxRate] = useState(DEFAULTS.taxRate)
@@ -31,16 +38,33 @@ export function useSalaryPreferences() {
 
   const baseWage = resolveBaseWage(workArea, wageTier, customWage)
 
+  const setWorkArea = useCallback((area: WorkArea) => {
+    setWorkAreaState(area)
+    setWageTier((prev) => {
+      if (prev === "custom" || isWageTierValidForWorkArea(area, prev)) return prev
+      return "age18"
+    })
+  }, [])
+
   useEffect(() => {
     const savedWorkArea = localStorage.getItem("workArea")
     const savedWageTier = localStorage.getItem("wageTier")
     const savedCustomWage = localStorage.getItem("customWage")
     const savedTaxRate = localStorage.getItem("taxRate")
 
+    const area =
+      savedWorkArea && WORK_AREAS.includes(savedWorkArea as WorkArea)
+        ? (savedWorkArea as WorkArea)
+        : DEFAULTS.workArea
+
     if (savedWorkArea && WORK_AREAS.includes(savedWorkArea as WorkArea)) {
-      setWorkArea(savedWorkArea as WorkArea)
+      setWorkAreaState(area)
     }
-    if (savedWageTier && WAGE_TIERS.includes(savedWageTier as WageTier)) {
+    if (
+      savedWageTier &&
+      ALL_WAGE_TIERS.includes(savedWageTier as WageTier) &&
+      isWageTierValidForWorkArea(area, savedWageTier as WageTier)
+    ) {
       setWageTier(savedWageTier as WageTier)
     }
     if (savedCustomWage) {
