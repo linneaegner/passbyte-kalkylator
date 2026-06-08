@@ -6,7 +6,7 @@ import {
   resolveBaseWage,
   type WageTier,
   type WorkArea,
-} from "@/lib/handels"
+} from "@passbyte/handels"
 
 const WORK_AREAS: WorkArea[] = ["Butik", "Lager", "E-handel"]
 const ALL_WAGE_TIERS: WageTier[] = [

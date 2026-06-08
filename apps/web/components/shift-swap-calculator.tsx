@@ -9,7 +9,7 @@ import { useSalaryPreferences } from "@/hooks/use-salary-preferences"
 import {
   compareShiftSwap,
   type ShiftInput,
-} from "@/lib/handels"
+} from "@passbyte/handels"
 import { useLanguage } from "@/lib/language-context"
 import { useMemo, useState } from "react"
 

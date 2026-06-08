@@ -16,8 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { formatSek } from "@/lib/format"
-import { getWageTiersForWorkArea, type WageTier, type WorkArea } from "@/lib/handels"
+import { formatSek } from "@passbyte/shared"
+import { getWageTiersForWorkArea, type WageTier, type WorkArea } from "@passbyte/handels"
 import { useLanguage } from "@/lib/language-context"
 import { cn } from "@/lib/utils"
 

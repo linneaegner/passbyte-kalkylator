@@ -2,7 +2,7 @@
 
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { ShiftSwapCalculator } from "@/components/shift-swap-calculator"
-import { AGREEMENT_YEAR } from "@/lib/handels"
+import { AGREEMENT_YEAR } from "@passbyte/handels"
 import { useLanguage } from "@/lib/language-context"
 import { ArrowRightLeft } from "lucide-react"
 

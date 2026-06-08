@@ -26,8 +26,8 @@ import {
 } from "@/components/ui/select"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useLanguage } from "@/lib/language-context"
-import { formatHoursDuration } from "@/lib/format"
-import type { ShiftInput } from "@/lib/handels"
+import { formatHoursDuration } from "@passbyte/shared"
+import type { ShiftInput } from "@passbyte/handels"
 
 interface ShiftInputCardProps {
   id: string
