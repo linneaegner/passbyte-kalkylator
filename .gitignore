@@ -8,6 +8,8 @@ node_modules
 out/
 apps/web/.next/
 apps/web/out/
+apps/mobile/.expo/
+apps/mobile/dist/
 
 # production
 /build

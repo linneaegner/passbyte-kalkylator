@@ -5,6 +5,7 @@
   "description": "Jämför lön vid passbyte enligt Handelsavtal.",
   "scripts": {
     "dev": "pnpm --filter @passbyte/web dev",
+    "dev:mobile": "pnpm --filter @passbyte/mobile start",
     "build": "pnpm --filter @passbyte/web build",
     "start": "pnpm --filter @passbyte/web start",
     "test": "pnpm --filter @passbyte/handels test",

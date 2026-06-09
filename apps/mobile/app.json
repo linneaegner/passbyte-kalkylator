@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "Passbyte",
+    "slug": "passbyte-kalkylator",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "passbyte",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "bundleIdentifier": "se.passbyte.kalkylator",
+      "supportsTablet": true
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#0d3d3d"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
