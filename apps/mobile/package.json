@@ -13,7 +13,7 @@
     "@passbyte/handels": "workspace:*",
     "@passbyte/shared": "workspace:*",
     "@react-native-async-storage/async-storage": "^2.2.0",
-    "@react-native-community/datetimepicker": "^8.4.4",
+    "@react-native-community/datetimepicker": "^9.1.0",
     "date-fns": "^4.1.0",
     "expo": "~56.0.9",
     "expo-constants": "~56.0.17",
@@ -30,12 +30,12 @@
     "react-native-reanimated": "4.3.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "4.25.2",
-    "react-native-svg": "^15.12.1",
+    "react-native-svg": "^15.15.4",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.8.3"
   },
   "devDependencies": {
-    "@types/react": "~19.2.2",
-    "typescript": "~5.9.3"
+    "@types/react": "~19.2.17",
+    "typescript": "~6.0.3"
   }
 }
