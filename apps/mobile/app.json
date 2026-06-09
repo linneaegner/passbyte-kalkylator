@@ -11,6 +11,14 @@
       "bundleIdentifier": "se.passbyte.kalkylator",
       "supportsTablet": true
     },
+    "android": {
+      "package": "se.passbyte.kalkylator",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      }
+    },
     "plugins": [
       "expo-router",
       [

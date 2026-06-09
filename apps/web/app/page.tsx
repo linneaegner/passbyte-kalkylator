@@ -43,7 +43,12 @@ export default function HomePage() {
       <footer className="bg-primary text-primary-foreground py-4 px-4 mt-auto">
         <div className="text-xs text-center max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto opacity-90 leading-relaxed space-y-2">
           <p>{t("footer", { year: AGREEMENT_YEAR })}</p>
-          <p className="opacity-80">{t("footer.privacy")}</p>
+          <p className="opacity-80">
+            {t("footer.privacy")}{" "}
+            <a href="/privacy" className="underline underline-offset-2 hover:opacity-100">
+              Integritetspolicy
+            </a>
+          </p>
         </div>
       </footer>
     </div>
